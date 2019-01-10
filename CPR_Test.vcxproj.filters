@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="CPR_Test.cpp" />
+    <ClCompile Include="LevelGround.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CPR_Framework.h" />
+    <ClInclude Include="LevelGround.h">
+      <Filter>Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable.h">
+      <Filter>Renderable</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Test.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Renderable">
+      <UniqueIdentifier>{bfd65788-ae51-448f-affc-f6d2f565f034}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

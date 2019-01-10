@@ -1,0 +1,5 @@
+Debug/*
+Release/*
+.vs/*
+debug.txt
+CPR_Test.vcxproj.user
