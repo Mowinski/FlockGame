@@ -22,9 +22,13 @@ Game * Game::GetInstance()
 
 void Game::Update(float deltaTime)
 {
+    timer->updateTime(deltaTime);
+    if (!timer->canStartNextFrame()) { return; }
+
     for (auto actor : actors) {
-        actor->OnUpdate(deltaTime);
+        actor->OnUpdate(timer->getDeltaTime());
     }
+    timer->clearTimeSinceLastRender();
 }
 
 void Game::Render()
@@ -44,5 +48,6 @@ bool Game::Init(std::string filename)
     for (auto actor : actors) {
         if(!actor->OnInit()) { return false; }
     }
+    timer = std::make_shared<Timer>();
     return true;
 }

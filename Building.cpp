@@ -2,7 +2,7 @@
 
 Building::Building(D3DXVECTOR3 _position, int _height) : position{ _position }, height { _height }
 {
-
+    position.y = static_cast<float>(height / 2.0f);
 }
 
 

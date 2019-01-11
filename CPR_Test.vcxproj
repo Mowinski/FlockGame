@@ -18,6 +18,7 @@
     <ClCompile Include="LevelGround.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderable.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Building.h" />
@@ -27,6 +28,7 @@
     <ClInclude Include="LevelGround.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

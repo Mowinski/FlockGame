@@ -17,13 +17,11 @@ Player::Player(D3DXVECTOR3 _eyePosition, D3DXVECTOR3 _lookDir) :
 
 void Player::OnUpdate(float deltaTime)
 {
-
     Rotate(deltaTime);
     Move(deltaTime);
 
     D3DXVECTOR3 target{ eyePosition + lookDir };
     LookAt(eyePosition, target);
-    CenterCursor();
 }
 
 void Player::OnRender()
@@ -45,13 +43,16 @@ void Player::Rotate(float deltaTime)
     D3DXVECTOR2 mouseDelta = CalculateMouseDelta();
     xRotation += -mouseDelta.x * mouseSensitivity * deltaTime;
     yRotation += mouseDelta.y * mouseSensitivity * deltaTime;
-    if (yRotation > 1.4) { yRotation = 1.4; }
-    if (yRotation < -1.4) { yRotation = -1.4; }
-    if (xRotation > D3DX_PI) { xRotation -= 2.0f * D3DX_PI; }
-    if (xRotation < -D3DX_PI) { xRotation += 2.0f * D3DX_PI; }
+    if (yRotation > maxYAngle) { yRotation = maxYAngle; }
+    if (yRotation < -maxYAngle) { yRotation = -maxYAngle; }
+    if (xRotation > 360.0f) { xRotation -= 360.0f; }
+    if (xRotation < 0.0f) { xRotation += 360.0f; }
 
-    D3DXMATRIX rotation;
-    D3DXMatrixRotationYawPitchRoll(&rotation, xRotation, 0, yRotation);
+    D3DXMATRIX matRotationX;
+    D3DXMATRIX matRotationY;
+    D3DXMatrixRotationAxis(&matRotationX, &upAxis, D3DXToRadian(xRotation));
+    D3DXMatrixRotationAxis(&matRotationY, &GetLeftVector(), D3DXToRadian(yRotation));
+    D3DXMATRIX rotation = matRotationX * matRotationY;
     D3DXVec3TransformCoord(&lookDir, &D3DXVECTOR3{1.0f, 0.0f, 0.0f}, &rotation);
 }
 
@@ -65,30 +66,32 @@ void Player::Move(float deltaTime)
 
 void Player::CenterCursor() const
 {
-    SetCursorPos(mouseCenter.x, mouseCenter.y);
+    SetCursorPos(static_cast<int>(mouseCenter.x), static_cast<int>(mouseCenter.y));
 }
 
 D3DXVECTOR2 Player::CalculateMouseDelta() const
 {
-    return mouseCenter - GetMousePosition();
+    D3DXVECTOR2 delta = mouseCenter - GetMousePosition();
+    CenterCursor();
+    return delta;
 }
 
 inline D3DXVECTOR2 Player::CalculateMoveSpeed() const
 {
-    float vx = 0.0f, vz = 0.0f;
+    float speedAhead = 0.0f, speedSide = 0.0f;
     if (IsKeyPressed(Key::KEY_W) || IsKeyPressed(KEY_UP)) {
-        vz = moveSensitivity;
+        speedSide = moveSensitivity;
     }
     if (IsKeyPressed(Key::KEY_S) || IsKeyPressed(KEY_DOWN)) {
-        vz = -moveSensitivity;
+        speedSide = -moveSensitivity;
     }
     if (IsKeyPressed(Key::KEY_A) || IsKeyPressed(KEY_LEFT)) {
-        vx = moveSensitivity;
+        speedAhead = moveSensitivity;
     }
     if (IsKeyPressed(Key::KEY_D) || IsKeyPressed(KEY_RIGHT)) {
-        vx = -moveSensitivity;
+        speedAhead = -moveSensitivity;
     }
-    return D3DXVECTOR2(vx, vz);
+    return D3DXVECTOR2(speedAhead, speedSide);
 }
 
 D3DXVECTOR3 Player::GetLeftVector() const
@@ -109,5 +112,12 @@ void Player::DEBUG_PrintLookDir() const
 {
     std::ostringstream oss{};
     oss << "LookDir: {x: " << lookDir.x << " y: " << lookDir.y << " z: " << lookDir.z << "}" << std::endl;
+    OutputDebugString(oss.str().c_str());
+}
+
+void Player::DEBUG_PrintRotator() const
+{
+    std::ostringstream oss{};
+    oss << "MouseRotation: {x: " << xRotation << " y: " << yRotation << "}" << std::endl;
     OutputDebugString(oss.str().c_str());
 }

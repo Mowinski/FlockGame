@@ -18,10 +18,11 @@ protected:
 
     D3DXVECTOR3 eyePosition{ 0.0f, eyeHeightPosition, 0.0f };
     D3DXVECTOR3 lookDir{ 1.0f, 0.0f, 0.0f };
-    float mouseSensitivity{ 2.0f };
+    float mouseSensitivity{ 10.0f };
     float moveSensitivity{ 5.0f };
 
     const D3DXVECTOR3 upAxis{ 0.0f, 1.0f, 0.0f };
+    const float maxYAngle{ 55.0f };
     D3DXVECTOR2 mouseCenter{ 100.0f, 200.0f };
     float xRotation{ 0.0f };
     float yRotation{ 0.0f };
@@ -37,5 +38,6 @@ protected:
 
     void DEBUG_PrintEyePosition() const;
     void DEBUG_PrintLookDir() const;
+    void DEBUG_PrintRotator() const;
 };
 

@@ -18,6 +18,7 @@
     <ClCompile Include="City.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="City.h">
       <Filter>Renderable</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">

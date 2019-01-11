@@ -5,8 +5,8 @@
 #include "Renderable.h"
 #include "LevelGround.h"
 #include "Player.h"
-#include "Building.h"
 #include "City.h"
+#include "Timer.h"
 
 class Game {
 public:
@@ -21,6 +21,7 @@ public:
 private:
     Game();
     std::vector<std::shared_ptr<Renderable>> actors;
+    std::shared_ptr<Timer> timer;
 
     static Game* game;
 };
