@@ -1,18 +1,27 @@
 #pragma once
 #include <memory>
+#include <vector>
 
+#include "Renderable.h"
 #include "LevelGround.h"
+#include "Player.h"
+#include "Building.h"
+#include "City.h"
 
-class Game
-{
+class Game {
 public:
-	Game();
-	~Game();
-	void Update(float deltaTime);
-	void Render();
-	bool Init(std::string filename);
+    ~Game();
+
+    static Game* GetInstance();
+
+    void Update(float deltaTime);
+    void Render();
+    bool Init(std::string filename);
 
 private:
-	std::shared_ptr<LevelGround> levelGround;
+    Game();
+    std::vector<std::shared_ptr<Renderable>> actors;
+
+    static Game* game;
 };
 

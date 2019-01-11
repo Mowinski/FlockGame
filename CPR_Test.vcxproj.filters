@@ -8,6 +8,16 @@
     <ClCompile Include="Renderable.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
+    <ClCompile Include="Building.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Player.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="City.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -17,13 +27,23 @@
     <ClInclude Include="Renderable.h">
       <Filter>Renderable</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Test.txt" />
+    <ClInclude Include="Building.h">
+      <Filter>Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Player.h">
+      <Filter>Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="City.h">
+      <Filter>Renderable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">
       <UniqueIdentifier>{bfd65788-ae51-448f-affc-f6d2f565f034}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
   </ItemGroup>
 </Project>

@@ -11,19 +11,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Building.cpp" />
+    <ClCompile Include="City.cpp" />
     <ClCompile Include="CPR_Test.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LevelGround.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderable.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Test.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="Building.h" />
+    <ClInclude Include="City.h" />
     <ClInclude Include="CPR_Framework.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="LevelGround.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{85139147-27E4-4F60-92EF-8BD03435A7B5}</ProjectGuid>
