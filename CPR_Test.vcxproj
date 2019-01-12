@@ -13,22 +13,37 @@
   <ItemGroup>
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="City.cpp" />
+    <ClCompile Include="AABBCollisionBox.cpp" />
     <ClCompile Include="CPR_Test.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameHUD.cpp" />
     <ClCompile Include="LevelGround.cpp" />
+    <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="NavMesh.cpp" />
+    <ClCompile Include="NavMeshItem.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="YellowBall.cpp" />
+    <ClCompile Include="YellowBallAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Building.h" />
     <ClInclude Include="City.h" />
+    <ClInclude Include="AABBCollisionBox.h" />
     <ClInclude Include="CPR_Framework.h" />
+    <ClInclude Include="EngineTypes.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameHUD.h" />
     <ClInclude Include="LevelGround.h" />
+    <ClInclude Include="Loader.h" />
+    <ClInclude Include="NavMesh.h" />
+    <ClInclude Include="NavMeshItem.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="YellowBall.h" />
+    <ClInclude Include="YellowBallAI.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

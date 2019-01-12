@@ -4,8 +4,10 @@
 
 #include "Renderable.h"
 #include "Building.h"
+#include "NavMeshItem.h"
 
 using CityMatrix = std::vector<std::vector<int>>;
+using BuildingVector = std::vector<std::shared_ptr<Building>>;
 
 class City : public Renderable {
 public:
@@ -16,6 +18,11 @@ public:
     bool OnInit();
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
+    D3DXVECTOR3 GetPosition() const override;
+
+    BuildingVector getBuildingListNear(D3DXVECTOR3 point, float range) const;
+    bool isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const;
+    bool isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const;
 
 protected:
     CityMatrix matrixOfCity;

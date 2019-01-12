@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 City::City(std::string _filename) : filename(_filename)
 {
@@ -19,16 +20,16 @@ bool City::OnInit()
     float x = 0.0f, z = 0.0f;
 
     for (auto row : matrixOfCity) {
-        for (auto buildingHeight : row) {
-            std::shared_ptr<Building> building = std::make_shared<Building>(D3DXVECTOR3{ x, 0.0f, z }, buildingHeight);
+        for(auto it = row.begin(); it != row.end(); ++it, x += spaceBetweenBuilding + buildingSize) {
+            if (*it < 1.0f) { continue; }
+            std::shared_ptr<Building> building = std::make_shared<Building>(D3DXVECTOR3{ x, 0.0f, z }, *it);
             building->OnInit();
             buildings.push_back(building);
-            x += spaceBetweenBuilding + buildingSize;
         }
         z += spaceBetweenBuilding + buildingSize;
         x = 0.0f;
     }
-
+    return true;
 }
 
 void City::OnUpdate(float deltaTime)
@@ -40,6 +41,38 @@ void City::OnRender()
     for (auto building : buildings) {
         building->OnRender();
     }
+}
+
+D3DXVECTOR3 City::GetPosition() const
+{
+    return D3DXVECTOR3();
+}
+
+BuildingVector City::getBuildingListNear(D3DXVECTOR3 point, float range) const
+{
+    BuildingVector vector{};
+
+    for (auto building : buildings) {
+        if (building->getDistanceBetweenCenterAndPoint(point) <= range) {
+            vector.push_back(building);
+        }
+    }
+    return vector;
+}
+
+bool City::isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const
+{
+    BuildingVector buildings = getBuildingListNear(point, range);
+    auto collideCmp = [point](std::shared_ptr<Building> b) {return b->isCollide(point); };
+    return std::any_of(buildings.begin(), buildings.end(), collideCmp);
+}
+
+bool City::isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const
+{
+    BuildingVector buildings = getBuildingListNear(item->position, range);
+    auto collideCmp = [item](std::shared_ptr<Building> b) {return b->isCollide(item->collisionBox); };
+
+    return std::any_of(buildings.begin(), buildings.end(), collideCmp);
 }
 
 

@@ -11,12 +11,13 @@ public:
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
     bool OnInit() override;
+    D3DXVECTOR3 GetPosition() const override;
     ~Player();
 
 protected:
     const float eyeHeightPosition = 1.0f;
 
-    D3DXVECTOR3 eyePosition{ 0.0f, eyeHeightPosition, 0.0f };
+    D3DXVECTOR3 eyePosition{ -10.0f, eyeHeightPosition, 0.0f };
     D3DXVECTOR3 lookDir{ 1.0f, 0.0f, 0.0f };
     float mouseSensitivity{ 10.0f };
     float moveSensitivity{ 5.0f };

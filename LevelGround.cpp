@@ -1,5 +1,5 @@
 #include "LevelGround.h"
-
+#include "Game.h"
 
 
 
@@ -11,7 +11,6 @@ LevelGround::LevelGround()
 
 LevelGround::~LevelGround()
 {
-    Release(ground);
 }
 
 void LevelGround::OnUpdate(float deltaTime)
@@ -20,7 +19,7 @@ void LevelGround::OnUpdate(float deltaTime)
 
 void LevelGround::OnRender()
 {
-    Render(ground,
+    Render(Game::GetInstance()->loader->GetMesh("unitbox"),
            D3DXVECTOR3{ 0.0f, 0.0f, 0.0f },
            D3DXVECTOR3{ 0.0f, 0.0f, 0.0f },
            D3DXVECTOR3{ mapSize, 0.10f, mapSize },
@@ -29,10 +28,10 @@ void LevelGround::OnRender()
 
 bool LevelGround::OnInit()
 {
-    ground = LoadFromFile("resources/meshes/unitbox.x");
-    if (ground == nullptr) {
-        MessageBox(NULL, "Error loading ground", "Error", MB_OK | MB_ICONERROR);
-        return false;
-    }
     return true;
+}
+
+D3DXVECTOR3 LevelGround::GetPosition() const
+{
+    return D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }

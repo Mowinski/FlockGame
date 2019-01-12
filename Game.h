@@ -3,10 +3,10 @@
 #include <vector>
 
 #include "Renderable.h"
-#include "LevelGround.h"
-#include "Player.h"
 #include "City.h"
 #include "Timer.h"
+#include "Loader.h"
+#include "NavMesh.h"
 
 class Game {
 public:
@@ -18,10 +18,16 @@ public:
     void Render();
     bool Init(std::string filename);
 
+    LPDIRECT3DDEVICE9 graphicDevice;
+    std::shared_ptr<City> city;
+    std::shared_ptr<Loader> loader;
+    std::shared_ptr<NavMesh> navMesh;
 private:
     Game();
+    bool RetrieveGraphicDevice();
     std::vector<std::shared_ptr<Renderable>> actors;
     std::shared_ptr<Timer> timer;
+
 
     static Game* game;
 };

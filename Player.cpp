@@ -1,7 +1,8 @@
 #include <sstream>
+#include <algorithm>
 
 #include "Player.h"
-#include "CPR_Framework.h"
+#include "Game.h"
 
 
 Player::Player()
@@ -12,6 +13,10 @@ Player::Player(D3DXVECTOR3 _eyePosition, D3DXVECTOR3 _lookDir) :
     eyeHeightPosition{_eyePosition.y},
     eyePosition{ _eyePosition },
     lookDir{ _lookDir }
+{
+}
+
+Player::~Player()
 {
 }
 
@@ -26,6 +31,7 @@ void Player::OnUpdate(float deltaTime)
 
 void Player::OnRender()
 {
+
 }
 
 bool Player::OnInit()
@@ -34,8 +40,9 @@ bool Player::OnInit()
     return true;
 }
 
-Player::~Player()
+D3DXVECTOR3 Player::GetPosition() const
 {
+    return eyePosition;
 }
 
 void Player::Rotate(float deltaTime)
@@ -60,8 +67,13 @@ void Player::Move(float deltaTime)
 {
     D3DXVECTOR2 speed = CalculateMoveSpeed() * deltaTime;
     D3DXVECTOR3 leftVector = GetLeftVector();
-    eyePosition += leftVector * speed.x + lookDir * speed.y;
-    eyePosition.y = eyeHeightPosition;
+    D3DXVECTOR3 newPosition{ eyePosition + leftVector * speed.x + lookDir * speed.y };
+    newPosition.y = eyeHeightPosition;
+
+    bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
+    if (isCollideWithAnyBuilding) { return; }
+
+    eyePosition = newPosition;
 }
 
 void Player::CenterCursor() const
@@ -90,6 +102,9 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed() const
     }
     if (IsKeyPressed(Key::KEY_D) || IsKeyPressed(KEY_RIGHT)) {
         speedAhead = -moveSensitivity;
+    }
+    if (IsKeyPressed(Key::KEY_RETURN)) {
+        DEBUG_PrintEyePosition();
     }
     return D3DXVECTOR2(speedAhead, speedSide);
 }

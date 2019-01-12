@@ -13,9 +13,9 @@ public:
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
     bool OnInit() override;
+    D3DXVECTOR3 GetPosition() const override;
 
 private:
-    Mesh* ground{ nullptr };
-    const float mapSize{ 100.0f };
+    const float mapSize{ 150.0f };
 };
 
