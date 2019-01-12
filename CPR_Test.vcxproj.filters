@@ -44,6 +44,7 @@
     <ClCompile Include="AABBCollisionBox.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="LoadingScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="AABBCollisionBox.h">
       <Filter>Engine</Filter>
     </ClInclude>
+    <ClInclude Include="LoadingScreen.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">

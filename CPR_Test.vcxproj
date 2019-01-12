@@ -19,6 +19,7 @@
     <ClCompile Include="GameHUD.cpp" />
     <ClCompile Include="LevelGround.cpp" />
     <ClCompile Include="Loader.cpp" />
+    <ClCompile Include="LoadingScreen.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavMeshItem.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -37,6 +38,7 @@
     <ClInclude Include="GameHUD.h" />
     <ClInclude Include="LevelGround.h" />
     <ClInclude Include="Loader.h" />
+    <ClInclude Include="LoadingScreen.h" />
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavMeshItem.h" />
     <ClInclude Include="Player.h" />

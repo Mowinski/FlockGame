@@ -1,12 +1,14 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <thread>
 
 #include "Renderable.h"
 #include "City.h"
 #include "Timer.h"
 #include "Loader.h"
 #include "NavMesh.h"
+#include "LoadingScreen.h"
 
 class Game {
 public:
@@ -14,12 +16,9 @@ public:
 
     static Game* GetInstance();
 
+    bool Init(std::string filename);
     void Update(float deltaTime);
     void Render();
-    bool Init(std::string filename);
-
-
-
 
     LPDIRECT3DDEVICE9 graphicDevice;
     std::shared_ptr<City> city;
@@ -32,10 +31,14 @@ private:
     bool PrepareNavMesh();
     bool PrepareInitialYellowBalls();
 
-    std::vector<std::shared_ptr<Renderable>> actors;
-    std::shared_ptr<Timer> timer;
-
+    void Loading();
 
     static Game* game;
-};
 
+    bool isLoading{ true };
+    std::string levelFilename;
+    std::vector<std::shared_ptr<Renderable>> actors;
+    std::shared_ptr<Timer> timer;
+    std::shared_ptr<LoadingScreen> loadingScreen;
+    std::thread* loadingThread;
+};

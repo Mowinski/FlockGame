@@ -6,25 +6,6 @@
 
 Game* Game::game = nullptr;
 
-Game::Game()
-{
-}
-
-bool Game::RetrieveGraphicDevice()
-{
-    Mesh* mesh = LoadFromFile("resources/meshes/unitbox.x");
-    if (mesh == nullptr) { return false; }
-    HRESULT result = mesh->m_mesh->GetDevice(&graphicDevice);
-    Release(mesh);
-    return SUCCEEDED(result);
-}
-
-
-Game::~Game()
-{
-    graphicDevice->Release();
-}
-
 Game * Game::GetInstance()
 {
     if (game == nullptr) {
@@ -33,8 +14,26 @@ Game * Game::GetInstance()
     return game;
 }
 
+bool Game::Init(std::string filename)
+{
+    levelFilename = filename;
+    if (!RetrieveGraphicDevice()) { return false; }
+    loadingScreen = std::make_shared<LoadingScreen>();
+    if (!loadingScreen->OnInit()) { return false; }
+    loader = std::make_shared<Loader>();
+
+    loadingThread = new std::thread(&Game::Loading, this);
+    return true;
+}
+
 void Game::Update(float deltaTime)
 {
+    if (isLoading) {
+        loadingScreen->OnUpdate(deltaTime);
+        return;
+    }
+    if (loadingThread->joinable()) { loadingThread->join(); }
+
     timer->updateTime(deltaTime);
     if (!timer->canStartNextFrame()) { return; }
 
@@ -46,30 +45,23 @@ void Game::Update(float deltaTime)
 
 void Game::Render()
 {
+    if (isLoading) {
+        loadingScreen->OnRender();
+        return;
+    }
     for (auto actor : actors) {
         actor->OnRender();
     }
     navMesh->OnRender();
 }
 
-
-bool Game::Init(std::string filename)
+bool Game::RetrieveGraphicDevice()
 {
-    if (!RetrieveGraphicDevice()) { return false; }
-    loader = std::make_shared<Loader>();
-    actors.push_back(std::make_shared<Player>());
-    actors.push_back(std::make_shared<GameHUD>());
-
-    for (auto actor : actors) {
-        if (!actor->OnInit()) { return false; }
-    }
-    if (!PrepareLevel(filename)) { return false; }
-    if (!PrepareNavMesh()) { return false; }
-    if (!PrepareInitialYellowBalls()) { return false; }
-
-    timer = std::make_shared<Timer>();
-
-    return true;
+    Mesh* mesh = LoadFromFile("resources/meshes/unitbox.x");
+    if (mesh == nullptr) { return false; }
+    HRESULT result = mesh->m_mesh->GetDevice(&graphicDevice);
+    Release(mesh);
+    return SUCCEEDED(result);
 }
 
 bool Game::PrepareLevel(const std::string& filename)
@@ -96,4 +88,48 @@ bool Game::PrepareInitialYellowBalls()
         actors.push_back(ball);
     }
     return true;
+}
+
+
+void Game::Loading()
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+    loadingScreen->state = LoadingState::PLAYER;
+    actors.push_back(std::make_shared<Player>());
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+    loadingScreen->state = LoadingState::GAME_HUD;
+    actors.push_back(std::make_shared<GameHUD>());
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+    for (auto actor : actors) {
+        if (!actor->OnInit()) { return; }
+    }
+    loadingScreen->state = LoadingState::PREPARE_LEVEL;
+    if (!PrepareLevel(levelFilename)) { return; }
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+    loadingScreen->state = LoadingState::PREPARE_NAV_MESH;
+    if (!PrepareNavMesh()) { return; }
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+    loadingScreen->state = LoadingState::PREPARE_YELLOW_BALL;
+    if (!PrepareInitialYellowBalls()) { return; }
+    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+
+    timer = std::make_shared<Timer>();
+    loadingScreen->state = LoadingState::GAME_IS_READY;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    isLoading = false;
+}
+
+Game::Game()
+{
+}
+
+Game::~Game()
+{
+    if (loadingThread->joinable()) { loadingThread->join(); }
+    graphicDevice->Release();
 }
