@@ -8,7 +8,7 @@
 
 class NavMesh : public Renderable {
 public:
-    NavMesh(int _levelSize);
+    NavMesh(int _levelSizeX, int _levelSizeZ);
     ~NavMesh();
 
     void OnRender() override;
@@ -20,7 +20,8 @@ public:
 
     NavMeshItemsVector FindNeighbors(int id, float x, float z) const;
 protected:
-    int levelSize;
+    int levelSizeX;
+    int levelSizeZ;
 
     NavMeshItemsVector navMeshItems;
 };

@@ -24,6 +24,9 @@ public:
     bool isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const;
     bool isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const;
 
+    float getMapWidth() const;
+    float getMapHeight() const;
+
 protected:
     CityMatrix matrixOfCity;
     std::string filename;
@@ -38,5 +41,9 @@ protected:
 
     const float buildingSize = 4.0f;
     const float spaceBetweenBuilding = 3.0f;
+    const float cityBorderX = 3.0f;
+    const float cityBorderZ = 3.0f;
+    int buildingsInRow;
+    int buildingsInCol;
 };
 

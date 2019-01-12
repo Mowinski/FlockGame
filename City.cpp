@@ -16,18 +16,23 @@ City::~City()
 bool City::OnInit()
 {
     if (!LoadCityFile()) { return false; }
+    buildingsInRow = matrixOfCity[0].size();
+    buildingsInCol = matrixOfCity.size();
+    const float mapWidthX = buildingsInRow * 7.0f + 3.0f;
+    const float mapWidthZ = buildingsInCol * 7.0f + 3.0f;
 
-    float x = 0.0f, z = 0.0f;
+    float x = -0.5f * mapWidthX + 2.0f + cityBorderX;
+    float z = -0.5f * mapWidthZ + 2.0f + cityBorderZ;
 
     for (auto row : matrixOfCity) {
         for(auto it = row.begin(); it != row.end(); ++it, x += spaceBetweenBuilding + buildingSize) {
-            if (*it < 1.0f) { continue; }
+            if (*it < 1.0f) { continue; } // @TODO Remove it!
             std::shared_ptr<Building> building = std::make_shared<Building>(D3DXVECTOR3{ x, 0.0f, z }, *it);
-            building->OnInit();
+            if (!building->OnInit()) { return false; }
             buildings.push_back(building);
         }
         z += spaceBetweenBuilding + buildingSize;
-        x = 0.0f;
+        x = -0.5f * mapWidthX + 2.0f + cityBorderX;
     }
     return true;
 }
@@ -65,6 +70,16 @@ bool City::isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const
     BuildingVector buildings = getBuildingListNear(point, range);
     auto collideCmp = [point](std::shared_ptr<Building> b) {return b->isCollide(point); };
     return std::any_of(buildings.begin(), buildings.end(), collideCmp);
+}
+
+float City::getMapWidth() const
+{
+    return buildingsInRow * 4.0f + (buildingsInRow-1) * 3.0f + 2.0f * cityBorderX;
+}
+
+float City::getMapHeight() const
+{
+    return buildingsInCol * 4.0f + (buildingsInCol - 1) * 3.0f + 2.0f * cityBorderZ;
 }
 
 bool City::isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const

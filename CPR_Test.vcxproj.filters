@@ -17,7 +17,6 @@
     <ClCompile Include="City.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
-    <ClCompile Include="AABBCollisionBox.cpp" />
     <ClCompile Include="YellowBall.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
@@ -42,6 +41,9 @@
     <ClCompile Include="YellowBallAI.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="AABBCollisionBox.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -60,7 +62,6 @@
     <ClInclude Include="City.h">
       <Filter>Renderable</Filter>
     </ClInclude>
-    <ClInclude Include="AABBCollisionBox.h" />
     <ClInclude Include="YellowBall.h">
       <Filter>Renderable</Filter>
     </ClInclude>
@@ -88,6 +89,9 @@
     <ClInclude Include="YellowBallAI.h">
       <Filter>AI</Filter>
     </ClInclude>
+    <ClInclude Include="AABBCollisionBox.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">
@@ -99,8 +103,14 @@
     <Filter Include="AI">
       <UniqueIdentifier>{b10db51c-b165-40f9-9ddb-41ecdb0531b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{9d771288-f13e-45a2-a906-4a416030d0fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />
+    <Text Include="Resources\city.txt">
+      <Filter>Resources</Filter>
+    </Text>
   </ItemGroup>
 </Project>

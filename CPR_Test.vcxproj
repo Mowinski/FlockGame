@@ -46,6 +46,7 @@
     <ClInclude Include="YellowBallAI.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Resources\city.txt" />
     <Text Include="TODO.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

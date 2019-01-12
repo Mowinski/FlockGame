@@ -1,7 +1,7 @@
 #include "NavMesh.h"
 #include "Game.h"
 
-NavMesh::NavMesh(int _levelSize) : levelSize{_levelSize}
+NavMesh::NavMesh(int _levelSizeX, int _levelSizeZ) : levelSizeX{_levelSizeX}, levelSizeZ(_levelSizeZ)
 {
 }
 
@@ -23,10 +23,12 @@ void NavMesh::OnUpdate(float deltaTime)
 
 bool NavMesh::OnInit()
 {
-    float halfOfLevelSize = levelSize * 0.5f;
+    const float halfOfLevelSizeX = levelSizeX * 0.5f;
+    const float halfOfLevelSizeZ = levelSizeZ * 0.5f;
+
     int id = 0;
-    for (float x = -halfOfLevelSize; x < halfOfLevelSize; ++x) {
-        for (float z = -halfOfLevelSize; z < halfOfLevelSize; ++z) {
+    for (float x = -halfOfLevelSizeX; x < halfOfLevelSizeX; ++x) {
+        for (float z = -halfOfLevelSizeZ; z < halfOfLevelSizeZ; ++z) {
             auto item = std::make_shared<NavMeshItem>(id++, x, z);
             if (Game::GetInstance()->city->isCollideWithAnyBuilding(item, 8.0f)) { continue; }
             item->OnInit();
