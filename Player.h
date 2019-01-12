@@ -31,12 +31,12 @@ protected:
     void Rotate(float deltaTime);
     void Move(float deltaTime);
 
-    inline D3DXVECTOR3 GetLeftVector() const;
-
+    inline D3DXVECTOR3 GetLeftVector(D3DXVECTOR3 lookDirection) const;
     inline void CenterCursor() const;
     inline D3DXVECTOR2 CalculateMouseDelta() const;
     inline D3DXVECTOR2 CalculateMoveSpeed() const;
-
+    D3DXVECTOR3 CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime) const;
+    D3DXVECTOR3 CalculateYRotateForVector(float angle) const;
     void DEBUG_PrintEyePosition() const;
     void DEBUG_PrintLookDir() const;
     void DEBUG_PrintRotator() const;

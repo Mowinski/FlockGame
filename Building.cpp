@@ -5,8 +5,8 @@
 Building::Building(D3DXVECTOR3 _position, int _height) :
     position{ _position.x, _height / 2.0f, _position.z },
     height { _height },
-    minPoint{ _position.x - 0.5 * buildingSize - 0.1f, _position.y - 0.5 * _height - 0.1f, _position.z - 0.5 * buildingSize - 0.1f },
-    maxPoint{ _position.x + 0.5 * buildingSize + 0.1f, _position.y + 0.5 * _height + 0.1f, _position.z + 0.5 * buildingSize + 0.1f }
+    minPoint{ _position.x - 0.5 * buildingSize - 0.15f, -10.0f, _position.z - 0.5 * buildingSize - 0.15f },
+    maxPoint{ _position.x + 0.5 * buildingSize + 0.15f, 10.0f, _position.z + 0.5 * buildingSize + 0.15f }
 {
 }
 

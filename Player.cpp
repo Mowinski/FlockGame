@@ -58,22 +58,34 @@ void Player::Rotate(float deltaTime)
     D3DXMATRIX matRotationX;
     D3DXMATRIX matRotationY;
     D3DXMatrixRotationAxis(&matRotationX, &upAxis, D3DXToRadian(xRotation));
-    D3DXMatrixRotationAxis(&matRotationY, &GetLeftVector(), D3DXToRadian(yRotation));
+    D3DXMatrixRotationAxis(&matRotationY, &GetLeftVector(lookDir), D3DXToRadian(yRotation));
     D3DXMATRIX rotation = matRotationX * matRotationY;
     D3DXVec3TransformCoord(&lookDir, &D3DXVECTOR3{1.0f, 0.0f, 0.0f}, &rotation);
 }
 
 void Player::Move(float deltaTime)
 {
-    D3DXVECTOR2 speed = CalculateMoveSpeed() * deltaTime;
-    D3DXVECTOR3 leftVector = GetLeftVector();
-    D3DXVECTOR3 newPosition{ eyePosition + leftVector * speed.x + lookDir * speed.y };
-    newPosition.y = eyeHeightPosition;
+    D3DXVECTOR3 newPosition = CalculatePosition(lookDir, deltaTime);
 
     bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
-    if (isCollideWithAnyBuilding) { return; }
+    if (!isCollideWithAnyBuilding) {
+        eyePosition = newPosition;
+        return;
+    }
 
-    eyePosition = newPosition;
+    const float sweepInterval = 10.0f;
+    for (float angle = sweepInterval; angle <= 80; angle += sweepInterval) {
+        for (int multiplier = -1; multiplier <= 1; multiplier += 2) {
+            D3DXVECTOR3 newLookDir = CalculateYRotateForVector(angle*multiplier);
+            newPosition = CalculatePosition(newLookDir, deltaTime);
+
+            bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
+            if (!isCollideWithAnyBuilding) {
+                eyePosition = newPosition;
+                return;
+            }
+        }
+    }
 }
 
 void Player::CenterCursor() const
@@ -109,10 +121,28 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed() const
     return D3DXVECTOR2(speedAhead, speedSide);
 }
 
-D3DXVECTOR3 Player::GetLeftVector() const
+D3DXVECTOR3 Player::CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime) const
+{
+    D3DXVECTOR2 speed = CalculateMoveSpeed() * deltaTime;
+    D3DXVECTOR3 leftVector = GetLeftVector(lookDirection);
+    D3DXVECTOR3 newPosition{ eyePosition + leftVector * speed.x + lookDirection * speed.y };
+    newPosition.y = eyeHeightPosition;
+    return newPosition;
+}
+
+D3DXVECTOR3 Player::CalculateYRotateForVector(float angle) const
+{
+    D3DXVECTOR3 newLookDir{ lookDir };
+    angle = D3DXToRadian(angle);
+    newLookDir.x = lookDir.x * cos(angle) - lookDir.z * sin(angle);
+    newLookDir.z = lookDir.x * sin(angle) + lookDir.z * cos(angle);
+    return newLookDir;
+}
+
+D3DXVECTOR3 Player::GetLeftVector(D3DXVECTOR3 lookDirection) const
 {
     D3DXVECTOR3 leftVector;
-    D3DXVec3Cross(&leftVector, &lookDir, &upAxis);
+    D3DXVec3Cross(&leftVector, &lookDirection, &upAxis);
     return leftVector;
 }
 

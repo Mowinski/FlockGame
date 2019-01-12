@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <cctype>
 
 City::City(std::string _filename) : filename(_filename)
 {
@@ -93,25 +94,33 @@ bool City::isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float ran
 
 bool City::LoadCityFile()
 {
-    std::ifstream in{ filename };
-    if (!in) { return false; }
+    std::ifstream file;
+    file.open(filename);
+
+    if (!file) { return false; }
 
     std::string line;
-    while (std::getline(in, line)) {
+    std::string number;
+
+    while (std::getline(file, line)) {
+        std::vector<int> row;
+
         if (line[0] == '/' && line[1] == '/') { continue; }
         if (line.size() <= 0) { continue; }
 
-        std::stringstream ss{ line };
-        std::vector<int> row{};
-        while (ss) {
-            std::string num;
-            if (!std::getline(ss, num, ',')) { break; }
+        for (int i = 0; i < line.size(); ++i) {
+            if (std::isdigit(line[i]) || line[i] == '.') {
+                number += line[i];
+            }
 
-            row.push_back(std::stoi(num));
+            else if (!number.empty()) {
+                row.push_back(std::stoi(number));
+                number.clear();
+            }
         }
-
+        row.push_back(std::stoi(number));
         matrixOfCity.push_back(row);
+        number.clear();
     }
-
     return true;
 }
