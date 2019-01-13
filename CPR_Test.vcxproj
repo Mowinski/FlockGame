@@ -24,6 +24,7 @@
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="NavMeshItem.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RedBall.cpp" />
     <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="YellowBall.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavMeshItem.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RedBall.h" />
     <ClInclude Include="Renderable.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="YellowBall.h" />

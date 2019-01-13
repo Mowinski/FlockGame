@@ -27,11 +27,23 @@ void Player::OnUpdate(float deltaTime)
 
     D3DXVECTOR3 target{ eyePosition + lookDir };
     LookAt(eyePosition, target);
+
+    for (auto ball : redBalls) {
+        ball->OnUpdate(deltaTime);
+    }
+    if (isReloading && lastShootTime < reloadTime) {
+        lastShootTime += deltaTime;
+    } else {
+        isReloading = false;
+        lastShootTime = 0.0f;
+    }
 }
 
 void Player::OnRender()
 {
-
+    for (auto ball : redBalls) {
+        ball->OnRender();
+    }
 }
 
 bool Player::OnInit()
@@ -100,7 +112,7 @@ D3DXVECTOR2 Player::CalculateMouseDelta() const
     return delta;
 }
 
-inline D3DXVECTOR2 Player::CalculateMoveSpeed() const
+inline D3DXVECTOR2 Player::CalculateMoveSpeed()
 {
     float speedAhead = 0.0f, speedSide = 0.0f;
     if (IsKeyPressed(Key::KEY_W) || IsKeyPressed(KEY_UP)) {
@@ -118,10 +130,16 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed() const
     if (IsKeyPressed(Key::KEY_RETURN)) {
         DEBUG_PrintEyePosition();
     }
+    if (LeftMouseButton() && !isReloading) {
+        std::shared_ptr<RedBall> ball = std::make_shared<RedBall>(eyePosition, lookDir);
+        redBalls.push_back(ball);
+        Game::GetInstance()->blackboard->redBalls.push_back(ball);
+        isReloading = true;
+    }
     return D3DXVECTOR2(speedAhead, speedSide);
 }
 
-D3DXVECTOR3 Player::CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime) const
+D3DXVECTOR3 Player::CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime)
 {
     D3DXVECTOR2 speed = CalculateMoveSpeed() * deltaTime;
     D3DXVECTOR3 leftVector = GetLeftVector(lookDirection);

@@ -48,6 +48,7 @@
     <ClCompile Include="Blackboard.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="RedBall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="Blackboard.h">
       <Filter>AI</Filter>
     </ClInclude>
+    <ClInclude Include="RedBall.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">

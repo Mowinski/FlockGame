@@ -52,7 +52,6 @@ void Game::Render()
     for (auto actor : actors) {
         actor->OnRender();
     }
-    //navMesh->OnRender();
 }
 
 bool Game::RetrieveGraphicDevice()

@@ -2,6 +2,7 @@
 #include <d3dx9.h>
 
 #include "Renderable.h"
+#include "RedBall.h"
 
 class Player : public Renderable {
 public:
@@ -28,17 +29,21 @@ protected:
     float xRotation{ 0.0f };
     float yRotation{ 0.0f };
 
+    const float reloadTime{ 3.0f };
+    float lastShootTime{ 0.0f };
+    bool isReloading = false;
+    RedBallVectorType redBalls;
+
     void Rotate(float deltaTime);
     void Move(float deltaTime);
 
     inline D3DXVECTOR3 GetLeftVector(D3DXVECTOR3 lookDirection) const;
     inline void CenterCursor() const;
     inline D3DXVECTOR2 CalculateMouseDelta() const;
-    inline D3DXVECTOR2 CalculateMoveSpeed() const;
-    D3DXVECTOR3 CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime) const;
+    inline D3DXVECTOR2 CalculateMoveSpeed();
+    D3DXVECTOR3 CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime);
     D3DXVECTOR3 CalculateYRotateForVector(float angle) const;
     void DEBUG_PrintEyePosition() const;
     void DEBUG_PrintLookDir() const;
     void DEBUG_PrintRotator() const;
 };
-

@@ -28,6 +28,15 @@ std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance,
     return *randIt;
 }
 
+std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3& position) const
+{
+    std::shared_ptr<YellowBall> ball;
+    auto findNearest = [&position](std::shared_ptr<YellowBall> item) {
+        D3DXVECTOR3 diff{ item->GetPosition() - position };
+    }
+    //std::for_each(yellowBalls.begin(), yellowBalls.end(), findNearest);
+}
+
 NavMeshItemsVectorType Blackboard::getPath(std::shared_ptr<NavMeshItem> start, std::shared_ptr<NavMeshItem> end)
 {
     NavMeshItemsVectorType path{};
