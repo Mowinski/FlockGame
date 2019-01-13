@@ -18,11 +18,11 @@ public:
 
     std::shared_ptr<NavMeshItem> getRandom() const;
 
-    NavMeshItemsVector FindNeighbors(int id, float x, float z) const;
+    NavMeshItemsVectorType FindNeighbors(int id, float x, float z) const;
+
+    NavMeshItemsVectorType navMeshItems;
 protected:
     int levelSizeX;
     int levelSizeZ;
-
-    NavMeshItemsVector navMeshItems;
 };
 

@@ -37,7 +37,7 @@ bool NavMesh::OnInit()
     }
 
     for (auto navMeshItem : navMeshItems) {
-        NavMeshItemsVector neighbors = FindNeighbors(navMeshItem->id, navMeshItem->position.x, navMeshItem->position.z);
+        NavMeshItemsVectorType neighbors = FindNeighbors(navMeshItem->id, navMeshItem->position.x, navMeshItem->position.z);
         navMeshItem->AddNeighbors(neighbors);
     }
     return true;
@@ -55,9 +55,9 @@ std::shared_ptr<NavMeshItem> NavMesh::getRandom() const
     return *randIt;
 }
 
-NavMeshItemsVector NavMesh::FindNeighbors(int id, float x, float z) const
+NavMeshItemsVectorType NavMesh::FindNeighbors(int id, float x, float z) const
 {
-    NavMeshItemsVector items{};
+    NavMeshItemsVectorType items{};
     for (auto item : navMeshItems) {
         if (item->id == id) { continue; }
         D3DXVECTOR2 distanceVec{ item->position.x - x, item->position.z - z };

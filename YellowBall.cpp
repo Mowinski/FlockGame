@@ -21,7 +21,7 @@ void YellowBall::OnRender()
 
 void YellowBall::OnUpdate(float deltaTime)
 {
-    force = ai->OnUpdate(deltaTime) * 30.0f;
+    force = ai->OnUpdate(deltaTime) * 10.0f;
     D3DXVECTOR3 acceleration{ force / weight };
     speed = acceleration * deltaTime;
     D3DXVECTOR3 diffPosition{ speed * deltaTime };

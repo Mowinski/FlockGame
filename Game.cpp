@@ -52,7 +52,7 @@ void Game::Render()
     for (auto actor : actors) {
         actor->OnRender();
     }
-    navMesh->OnRender();
+    //navMesh->OnRender();
 }
 
 bool Game::RetrieveGraphicDevice()
@@ -82,10 +82,11 @@ bool Game::PrepareNavMesh()
 
 bool Game::PrepareInitialYellowBalls()
 {
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 5; i++) {
         auto ball = std::make_shared<YellowBall>(navMesh->getRandom());
         if (!ball->OnInit()) { return false; }
         actors.push_back(ball);
+        blackboard->yellowBalls.push_back(ball);
     }
     return true;
 }
@@ -93,30 +94,35 @@ bool Game::PrepareInitialYellowBalls()
 
 void Game::Loading()
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    const int delayTime = 10;
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PLAYER;
     actors.push_back(std::make_shared<Player>());
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::GAME_HUD;
     actors.push_back(std::make_shared<GameHUD>());
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     for (auto actor : actors) {
         if (!actor->OnInit()) { return; }
     }
     loadingScreen->state = LoadingState::PREPARE_LEVEL;
     if (!PrepareLevel(levelFilename)) { return; }
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PREPARE_NAV_MESH;
     if (!PrepareNavMesh()) { return; }
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
+
+    loadingScreen->state = LoadingState::PREPARE_BLACKBOARD;
+    blackboard = std::make_unique<Blackboard>(navMesh);
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PREPARE_YELLOW_BALL;
     if (!PrepareInitialYellowBalls()) { return; }
-    std::this_thread::sleep_for(std::chrono::milliseconds(400));
+    std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     timer = std::make_shared<Timer>();
     loadingScreen->state = LoadingState::GAME_IS_READY;

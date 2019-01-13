@@ -9,6 +9,7 @@
 #include "Loader.h"
 #include "NavMesh.h"
 #include "LoadingScreen.h"
+#include "Blackboard.h"
 
 class Game {
 public:
@@ -24,6 +25,7 @@ public:
     std::shared_ptr<City> city;
     std::shared_ptr<Loader> loader;
     std::shared_ptr<NavMesh> navMesh;
+    std::unique_ptr<Blackboard> blackboard;
 private:
     Game();
     bool RetrieveGraphicDevice();

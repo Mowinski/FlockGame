@@ -19,18 +19,20 @@ public:
     void OnUpdate(float deltaTime);
     bool OnInit();
     D3DXVECTOR3 GetPosition() const override;
+    float CalculateDist(float x, float z) const;
 
-    void AddNeighbors(const NavMeshItemsVector& items);
+    void AddNeighbors(const NavMeshItemsVectorType& items);
     std::shared_ptr<NavMeshItem> GetRandomNeighbor() const;
 
     const int id;
     const D3DXVECTOR3 position;
     const AABBCollisionBox collisionBox;
+    NavMeshItemsVectorType neighbors;
+
 protected:
     const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };
     const D3DXVECTOR3 scale{ 1.0f, 0.2f, 1.0f };
     const D3DXVECTOR4 color{ 0.0f, 0.0f, 1.0f, 1.0f };
-    NavMeshItemsVector neighbors;
 
     LPD3DXLINE line;
 };

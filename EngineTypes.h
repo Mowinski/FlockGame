@@ -4,4 +4,4 @@
 
 class NavMeshItem;
 
-using NavMeshItemsVector = std::vector<std::shared_ptr<NavMeshItem>>;
+using NavMeshItemsVectorType = std::vector<std::shared_ptr<NavMeshItem>>;

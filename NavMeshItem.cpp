@@ -38,7 +38,13 @@ D3DXVECTOR3 NavMeshItem::GetPosition() const
     return position;
 }
 
-void NavMeshItem::AddNeighbors(const NavMeshItemsVector & items)
+float NavMeshItem::CalculateDist(float x, float z) const
+{
+    D3DXVECTOR2 diff(position.x - x, position.z - z);
+    return D3DXVec2Length(&diff);
+}
+
+void NavMeshItem::AddNeighbors(const NavMeshItemsVectorType & items)
 {
     for (auto item : items) {
         neighbors.push_back(item);

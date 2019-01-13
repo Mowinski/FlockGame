@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Blackboard.cpp" />
     <ClCompile Include="Building.cpp" />
     <ClCompile Include="City.cpp" />
     <ClCompile Include="AABBCollisionBox.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="YellowBallAI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Blackboard.h" />
     <ClInclude Include="Building.h" />
     <ClInclude Include="City.h" />
     <ClInclude Include="AABBCollisionBox.h" />

@@ -6,6 +6,7 @@
 enum YellowBallState {
     IDLE,
     MOVE_TO,
+    SCARED,
 };
 
 class YellowBallAI {
@@ -20,6 +21,7 @@ protected:
     YellowBallState state;
     std::shared_ptr<NavMesh> navMesh;
     std::shared_ptr<NavMeshItem> goal;
+    NavMeshItemsVectorType path;
     Renderable* actor;
 };
 

@@ -45,6 +45,9 @@
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="LoadingScreen.cpp" />
+    <ClCompile Include="Blackboard.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -94,6 +97,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="LoadingScreen.h" />
+    <ClInclude Include="Blackboard.h">
+      <Filter>AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">

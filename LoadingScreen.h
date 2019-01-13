@@ -10,6 +10,7 @@ enum LoadingState {
     PREPARE_LEVEL,
     PREPARE_NAV_MESH,
     PREPARE_YELLOW_BALL,
+    PREPARE_BLACKBOARD,
     GAME_IS_READY,
 };
 

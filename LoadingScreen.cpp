@@ -50,6 +50,9 @@ void LoadingScreen::OnUpdate(float deltaTime)
     case PREPARE_YELLOW_BALL:
         task = "Create initials yellow balls";
         break;
+    case PREPARE_BLACKBOARD:
+        task = "Prepare blackboard for AI";
+        break;
     case GAME_IS_READY:
         task = "Game is ready. Prepare yourself";
         break;

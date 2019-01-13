@@ -29,3 +29,4 @@ protected:
     std::shared_ptr<YellowBallAI> ai;
 };
 
+using YellowBallVectorType = std::vector<std::shared_ptr<YellowBall>>;
