@@ -65,19 +65,19 @@ D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate()
 
 	if (distance < 1.5f) {
 		state = YellowBallState::FOLLOW_SHORT_DISTANCE;
-	}
-	else {
-		D3DXVECTOR3 diff = path[0]->GetPosition() - actor->GetPosition();
-		float distance = diff.x*diff.x + diff.z*diff.z;
-		if (distance < 0.1f) {
-			path.erase(path.begin());
-		}
-
-		diff.y = 0.0f;
-		D3DXVec3Normalize(&speed, &diff);
-		speed *= 1.5f;
+		return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
 	}
 
+	diff = path[0]->GetPosition() - actor->GetPosition();
+	distance = diff.x*diff.x + diff.z*diff.z;
+	if (distance < 0.1f) {
+		path.erase(path.begin());
+	}
+
+	diff.y = 0.0f;
+	D3DXVec3Normalize(&speed, &diff);
+	speed *= 1.5f;
+	
 	return speed;
 }
 
@@ -95,6 +95,7 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate()
 	}
 	if (distance < 0.1f && path.size() == 0) {
 		state = YellowBallState::IDLE;
+		return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
 	}
 
 	if (!actor->isLeader) {
@@ -102,6 +103,7 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate()
 		if (leader != nullptr) {
 			state = YellowBallState::FOLLOW_LONG_DISTANCE;
 			targetLeader = leader;
+			return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
 		}
 	}
 	diff.y = 0.0f;
