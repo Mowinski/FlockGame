@@ -18,11 +18,13 @@ public:
     D3DXVECTOR3 GetPosition() const override;
 
 protected:
+	const int height;
+	const float buildingSize = 4.0f;
     const D3DXVECTOR3 position;
-    D3DXVECTOR4 color{ 1.0f, 0.0f, 0.0f, 1.0f };
-    const int height;
-    const float buildingSize = 4.0f;
-
+	const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };
+	const D3DXVECTOR3 scale;
+	D3DXVECTOR4 color{ 0.0f, 0.0f, 1.0f, 1.0f };
+    
     const D3DXVECTOR3 minPoint;
     const D3DXVECTOR3 maxPoint;
 };

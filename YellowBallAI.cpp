@@ -39,6 +39,11 @@ D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
     return force;
 }
 
+std::shared_ptr<NavMeshItem> YellowBallAI::GetCurrentNavMeshItem() const
+{
+	return path[0];
+}
+
 void YellowBallAI::SelectNewGoal()
 {
     std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(20.0f, goal->position.x, goal->position.z);

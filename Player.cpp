@@ -132,6 +132,7 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
     }
     if (LeftMouseButton() && !isReloading) {
         std::shared_ptr<RedBall> ball = std::make_shared<RedBall>(eyePosition, lookDir);
+		ball->OnInit();
         redBalls.push_back(ball);
         Game::GetInstance()->blackboard->redBalls.push_back(ball);
         isReloading = true;

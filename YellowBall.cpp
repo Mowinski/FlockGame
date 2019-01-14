@@ -38,3 +38,8 @@ D3DXVECTOR3 YellowBall::GetPosition() const
 {
     return position;
 }
+
+std::shared_ptr<NavMeshItem> YellowBall::GetCurrentNavMeshItem() const
+{
+	return ai->GetCurrentNavMeshItem();
+}

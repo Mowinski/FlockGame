@@ -17,9 +17,6 @@
     <ClCompile Include="City.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
-    <ClCompile Include="YellowBall.cpp">
-      <Filter>Renderable</Filter>
-    </ClCompile>
     <ClCompile Include="GameHUD.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
@@ -44,11 +41,19 @@
     <ClCompile Include="AABBCollisionBox.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="LoadingScreen.cpp" />
     <ClCompile Include="Blackboard.cpp">
       <Filter>AI</Filter>
     </ClCompile>
-    <ClCompile Include="RedBall.cpp" />
+    <ClCompile Include="LoadingScreen.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
+    <ClCompile Include="YellowBall.cpp">
+      <Filter>Renderable\Balls</Filter>
+    </ClCompile>
+    <ClCompile Include="RedBall.cpp">
+      <Filter>Renderable\Balls</Filter>
+    </ClCompile>
+    <ClCompile Include="RedBallAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -65,9 +70,6 @@
       <Filter>Renderable</Filter>
     </ClInclude>
     <ClInclude Include="City.h">
-      <Filter>Renderable</Filter>
-    </ClInclude>
-    <ClInclude Include="YellowBall.h">
       <Filter>Renderable</Filter>
     </ClInclude>
     <ClInclude Include="GameHUD.h">
@@ -97,11 +99,19 @@
     <ClInclude Include="AABBCollisionBox.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingScreen.h" />
     <ClInclude Include="Blackboard.h">
       <Filter>AI</Filter>
     </ClInclude>
-    <ClInclude Include="RedBall.h" />
+    <ClInclude Include="LoadingScreen.h">
+      <Filter>Renderable</Filter>
+    </ClInclude>
+    <ClInclude Include="YellowBall.h">
+      <Filter>Renderable\Balls</Filter>
+    </ClInclude>
+    <ClInclude Include="RedBall.h">
+      <Filter>Renderable\Balls</Filter>
+    </ClInclude>
+    <ClInclude Include="RedBallAI.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">
@@ -115,6 +125,9 @@
     </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{9d771288-f13e-45a2-a906-4a416030d0fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderable\Balls">
+      <UniqueIdentifier>{9235419f-9161-41ae-8a06-f3c6b04bd86c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,8 @@ Building::Building(D3DXVECTOR3 _position, int _height) :
     position{ _position.x, _height / 2.0f, _position.z },
     height { _height },
     minPoint{ _position.x - 0.5 * buildingSize - 0.15f, -10.0f, _position.z - 0.5 * buildingSize - 0.15f },
-    maxPoint{ _position.x + 0.5 * buildingSize + 0.15f, 10.0f, _position.z + 0.5 * buildingSize + 0.15f }
+    maxPoint{ _position.x + 0.5 * buildingSize + 0.15f, 10.0f, _position.z + 0.5 * buildingSize + 0.15f },
+	scale{ buildingSize, static_cast<float>(height), buildingSize }
 {
 }
 
@@ -21,12 +22,7 @@ void Building::OnUpdate(float deltaTime)
 
 void Building::OnRender()
 {
-    Render(Game::GetInstance()->loader->GetMesh("unitbox"),
-           position,
-           D3DXVECTOR3{ 0.0f, 0.0f, 0.0f },
-           D3DXVECTOR3{ buildingSize, static_cast<float>(height), buildingSize },
-           color);
-
+    Render(Game::GetInstance()->loader->GetMesh("unitbox"), position, rotation, scale, color);
 }
 
 bool Building::OnInit()

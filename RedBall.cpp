@@ -1,11 +1,12 @@
 #include "RedBall.h"
 #include "Game.h"
 #include "CPR_Framework.h"
+#include "RedBallAI.h"
+#include <limits>
 
-
-RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }
+RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 550.0f }
 {
-    energy = 100.0f;
+	ai = std::make_shared<RedBallAI>(this);
 }
 
 
@@ -20,17 +21,57 @@ void RedBall::OnRender()
 
 void RedBall::OnUpdate(float deltaTime)
 {
-    if (energy <= 0.0f) { return; }
-    position += lookDir * deltaTime;
-    energy -= 1.0f * deltaTime;
+	if (position.y <= 0.05f) { return; }
+
+	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
+	D3DXVECTOR3 speedNorm{};
+	float speedValue = D3DXVec3Length(&speed);
+	D3DXVec3Normalize(&speedNorm, &speed);
+	D3DXVECTOR3 airResistance = - 0.001 * speedValue * speedValue * speedNorm;
+	
+	speed += (force + airResistance + gravity) / weight * deltaTime;
+	D3DXVECTOR3 newPosition{ position + speed * deltaTime };
+	
+	bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
+	if (!isCollideWithAnyBuilding) {
+		position = newPosition;
+	}
+	else {
+		D3DXVECTOR3 normal = FindNormal(speedNorm);
+		D3DXMATRIX rot;
+		float angle = D3DXVec3Dot(&normal, &speedNorm);
+		D3DXMatrixRotationAxis(&rot, &normal, angle);
+		D3DXVec3TransformCoord(&speed, &speed, &rot);
+	}
 }
 
 bool RedBall::OnInit()
-{
-    return false;
+{	
+	return true;
 }
 
 D3DXVECTOR3 RedBall::GetPosition() const
 {
     return position;
+}
+
+D3DXVECTOR3 RedBall::FindNormal(const D3DXVECTOR3 & speedNorm) const
+{
+	static D3DXVECTOR3 norms[] = {
+		D3DXVECTOR3{1.0f, 0.0f, 0.0f},
+		D3DXVECTOR3{0.0f, 0.0f, 1.0f},
+		D3DXVECTOR3{-1.0f, 0.0f, 0.0f},
+		D3DXVECTOR3{0.0f, 0.0f, -1.0f},
+	};
+	float minDist = (std::numeric_limits<float>::max)();
+	int index = 0;
+
+	for (int i = 0; i < sizeof(norms); ++i) {
+		float dist = D3DXVec3Length(&(norms[i] - speedNorm));
+		if (dist < minDist) {
+			index = i;
+			minDist = dist;
+		}
+	}
+	return norms[index];
 }

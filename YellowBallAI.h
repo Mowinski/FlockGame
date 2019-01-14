@@ -15,9 +15,11 @@ public:
     ~YellowBallAI();
 
     D3DXVECTOR3 OnUpdate(float deltaTime);
+	std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
 
 protected:
     void SelectNewGoal();
+
     YellowBallState state;
     std::shared_ptr<NavMesh> navMesh;
     std::shared_ptr<NavMeshItem> goal;

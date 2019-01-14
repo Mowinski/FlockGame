@@ -1,7 +1,9 @@
 #include "Blackboard.h"
+
 #include <algorithm>
 #include <map>
-
+#include <d3dx9.h>
+#include <limits>
 
 Blackboard::Blackboard( std::shared_ptr<NavMesh> _navMesh) : navMesh(_navMesh)
 {
@@ -30,17 +32,22 @@ std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance,
 
 std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3& position) const
 {
-    std::shared_ptr<YellowBall> ball;
-    auto findNearest = [&position](std::shared_ptr<YellowBall> item) {
-        D3DXVECTOR3 diff{ item->GetPosition() - position };
-    }
-    //std::for_each(yellowBalls.begin(), yellowBalls.end(), findNearest);
+    std::shared_ptr<YellowBall> ret;
+	float minLength = (std::numeric_limits<float>::max)();
+	for (auto ball : yellowBalls) {
+		float diff = D3DXVec3Length(&(ball->GetPosition() - position));
+		if (diff < minLength) {
+			minLength = diff;
+			ret = ball;
+		}
+	}
+	return ret;
 }
 
 NavMeshItemsVectorType Blackboard::getPath(std::shared_ptr<NavMeshItem> start, std::shared_ptr<NavMeshItem> end)
 {
     NavMeshItemsVectorType path{};
-    const float INF = 99999999999.0f;
+    const float INF = (std::numeric_limits<float>::max)();
     NavMeshItemsVectorType closedSet{};
     NavMeshItemsVectorType openSet{};
     std::map< std::shared_ptr<NavMeshItem>, std::shared_ptr<NavMeshItem> > cameFrom;
@@ -97,4 +104,19 @@ NavMeshItemsVectorType Blackboard::getPath(std::shared_ptr<NavMeshItem> start, s
         }
     }
     return path;
+}
+
+std::shared_ptr<NavMeshItem> Blackboard::getNextStep(const D3DXVECTOR3 & start, std::shared_ptr<NavMeshItem> end)
+{
+	std::shared_ptr<NavMeshItem> startNavMesh;
+	float diff = (std::numeric_limits<float>::max)();
+	for (auto item : navMesh->navMeshItems) {
+		float length = D3DXVec3Length(&(item->GetPosition() - start));
+		if (length < diff) {
+			diff = length;
+			startNavMesh = item;
+		}
+	}
+
+	return getPath(startNavMesh, end)[0];
 }

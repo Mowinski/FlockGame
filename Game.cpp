@@ -3,6 +3,9 @@
 #include "YellowBall.h"
 #include "Player.h"
 #include "GameHUD.h"
+#include <cstdlib>
+#include <ctime>
+
 
 Game* Game::game = nullptr;
 
@@ -93,6 +96,7 @@ bool Game::PrepareInitialYellowBalls()
 
 void Game::Loading()
 {
+	std::srand(std::time(nullptr));
     const int delayTime = 10;
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 

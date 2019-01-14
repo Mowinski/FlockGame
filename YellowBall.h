@@ -14,6 +14,7 @@ public:
     void OnUpdate(float deltaTime) override;
     bool OnInit() override;
     D3DXVECTOR3 GetPosition() const override;
+	std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
 
 protected:
     D3DXVECTOR3 position;
