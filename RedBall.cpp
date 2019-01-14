@@ -21,7 +21,10 @@ void RedBall::OnRender()
 
 void RedBall::OnUpdate(float deltaTime)
 {
-	if (position.y <= 0.05f) { return; }
+	if (position.y <= 0.05f) { 
+		position.y = 0.05f;
+		return; 
+	}
 
 	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
 	D3DXVECTOR3 speedNorm{};
@@ -33,16 +36,14 @@ void RedBall::OnUpdate(float deltaTime)
 	D3DXVECTOR3 newPosition{ position + speed * deltaTime };
 	
 	bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
-	if (!isCollideWithAnyBuilding) {
-		position = newPosition;
-	}
-	else {
+	if (isCollideWithAnyBuilding) {
 		D3DXVECTOR3 normal = FindNormal(speedNorm);
-		D3DXMATRIX rot;
-		float angle = D3DXVec3Dot(&normal, &speedNorm);
-		D3DXMatrixRotationAxis(&rot, &normal, angle);
-		D3DXVec3TransformCoord(&speed, &speed, &rot);
+		D3DXVECTOR3 vn = D3DXVec3Dot(&normal, &speed) * normal;
+		D3DXVECTOR3 vt = speed - vn;
+		speed = vt - vn;
+		newPosition = position + speed * deltaTime;
 	}
+	position = newPosition;
 }
 
 bool RedBall::OnInit()
@@ -57,6 +58,7 @@ D3DXVECTOR3 RedBall::GetPosition() const
 
 D3DXVECTOR3 RedBall::FindNormal(const D3DXVECTOR3 & speedNorm) const
 {
+	/* @TODO Fix it! When angle < 45* */
 	static D3DXVECTOR3 norms[] = {
 		D3DXVECTOR3{1.0f, 0.0f, 0.0f},
 		D3DXVECTOR3{0.0f, 0.0f, 1.0f},
@@ -73,5 +75,5 @@ D3DXVECTOR3 RedBall::FindNormal(const D3DXVECTOR3 & speedNorm) const
 			minDist = dist;
 		}
 	}
-	return norms[index];
+	return -norms[index];
 }
