@@ -55,6 +55,7 @@ void Game::Render()
     for (auto actor : actors) {
         actor->OnRender();
     }
+	navMesh->OnRender();
 }
 
 bool Game::RetrieveGraphicDevice()
@@ -84,12 +85,13 @@ bool Game::PrepareNavMesh()
 
 bool Game::PrepareInitialYellowBalls()
 {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < ballsCount; i++) {
         auto ball = std::make_shared<YellowBall>(navMesh->getRandom());
         if (!ball->OnInit()) { return false; }
         actors.push_back(ball);
         blackboard->yellowBalls.push_back(ball);
     }
+	blackboard->nominateLeaders();
     return true;
 }
 

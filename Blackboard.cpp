@@ -4,6 +4,7 @@
 #include <map>
 #include <d3dx9.h>
 #include <limits>
+#include <cmath>
 
 Blackboard::Blackboard( std::shared_ptr<NavMesh> _navMesh) : navMesh(_navMesh)
 {
@@ -119,4 +120,20 @@ std::shared_ptr<NavMeshItem> Blackboard::getNextStep(const D3DXVECTOR3 & start, 
 	}
 
 	return getPath(startNavMesh, end)[0];
+}
+
+void Blackboard::nominateLeaders()
+{
+	size_t ballsCount = yellowBalls.size();
+	int leadersCount = std::ceil(ballsCount / 5.0f);
+	yellowBallsLeaders.clear();
+	for (auto ball : yellowBalls) {
+		ball->UnsetLeader();
+	}
+
+	std::random_shuffle(yellowBalls.begin(), yellowBalls.end());
+	for (auto it = yellowBalls.begin(); it != yellowBalls.begin() + leadersCount; ++it) {
+		(*it)->SetLeader();
+		yellowBallsLeaders.push_back(*it);
+	}
 }

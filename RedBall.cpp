@@ -4,7 +4,7 @@
 #include "RedBallAI.h"
 #include <limits>
 
-RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 550.0f }
+RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 255.0f }
 {
 	ai = std::make_shared<RedBallAI>(this);
 }

@@ -14,6 +14,7 @@ public:
     ~Blackboard();
 
     YellowBallVectorType yellowBalls{};
+	YellowBallVectorType yellowBallsLeaders{};
     RedBallVectorType redBalls{};
     std::shared_ptr<NavMesh> navMesh;
 
@@ -22,4 +23,5 @@ public:
     std::shared_ptr<YellowBall> getNearestBall(const D3DXVECTOR3& position) const;
     NavMeshItemsVectorType getPath(std::shared_ptr<NavMeshItem> start, std::shared_ptr<NavMeshItem> end);
 	std::shared_ptr<NavMeshItem> getNextStep(const D3DXVECTOR3& start, std::shared_ptr<NavMeshItem> end);
+	void nominateLeaders();
 };

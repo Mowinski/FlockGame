@@ -37,6 +37,7 @@ private:
 
     static Game* game;
 
+	int ballsCount{ 6 };
     bool isLoading{ true };
     std::string levelFilename;
     std::vector<std::shared_ptr<Renderable>> actors;
