@@ -2,6 +2,7 @@
 #include "Renderable.h"
 #include <d3dx9.h>
 
+
 class GameHUD : public Renderable {
 public:
     GameHUD();
@@ -14,7 +15,9 @@ public:
 
 
 protected:
-    D3DXVECTOR2 center;
+    D3DXVECTOR2 crosshairPlace;
+	D3DXVECTOR2 ammoPlace;
+	ID3DXFont *font{ nullptr };
 
     void DrawRect(int x, int y, int w, int h, D3DCOLOR color) const;
 };

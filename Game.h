@@ -26,6 +26,7 @@ public:
     std::shared_ptr<Loader> loader;
     std::shared_ptr<NavMesh> navMesh;
     std::unique_ptr<Blackboard> blackboard;
+
 private:
     Game();
     bool RetrieveGraphicDevice();

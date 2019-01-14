@@ -35,6 +35,7 @@ void Player::OnUpdate(float deltaTime)
         lastShootTime += deltaTime;
     } else {
         isReloading = false;
+		Game::GetInstance()->blackboard->isPlayerReloading = false;
         lastShootTime = 0.0f;
     }
 }
@@ -135,6 +136,7 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
 		ball->OnInit();
         redBalls.push_back(ball);
         Game::GetInstance()->blackboard->redBalls.push_back(ball);
+		Game::GetInstance()->blackboard->isPlayerReloading = true;
         isReloading = true;
     }
     return D3DXVECTOR2(speedAhead, speedSide);

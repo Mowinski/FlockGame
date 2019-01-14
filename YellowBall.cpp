@@ -51,7 +51,6 @@ std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
 	for (auto leader : Game::GetInstance()->blackboard->yellowBallsLeaders) {
 		D3DXVECTOR3 diffVec = leader->GetPosition() - GetPosition();
 		float distance = D3DXVec3Length(&diffVec);
-		//float angle = D3DXVec3Dot(&(diffVec / distance), &speed);  // Speed is also lookDir
 		if (distance < shortestDistance) {
 			ret = leader;
 			shortestDistance = distance;

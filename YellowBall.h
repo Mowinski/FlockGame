@@ -29,7 +29,6 @@ protected:
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     D3DXVECTOR3 force{ 0.0f, 0.0f, 0.0f };
 
-	const float angleOfVisibility = D3DXToRadian(60.0f);
 	const float visibilityDistance = 100.0f;
 
     const float weight = 0.1f;
