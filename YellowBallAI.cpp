@@ -1,6 +1,7 @@
 #include "YellowBallAI.h"
 #include "Game.h"
 #include <algorithm>
+#include <random>
 
 YellowBallAI::YellowBallAI(YellowBall* _actor, std::shared_ptr<NavMeshItem> item) :
     navMesh(Game::GetInstance()->navMesh),
@@ -16,45 +17,53 @@ YellowBallAI::~YellowBallAI()
 {
 }
 
+#include <sstream>
 D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 {
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
-
     if (state == YellowBallState::IDLE) {
-		speed = IdleUpdate();
+		speed = IdleUpdate(deltaTime);
     }
 
 	if (state == YellowBallState::MOVE_TO) {
-		speed = MoveToUpdate();
+		speed = MoveToUpdate(deltaTime);
 	}
 
 	if (state == YellowBallState::FOLLOW_LONG_DISTANCE) {
-		speed = FollowLongDistanceUpdate();
+		speed = FollowLongDistanceUpdate(deltaTime);
 	}
 
 	if (state == YellowBallState::FOLLOW_SHORT_DISTANCE) {
-		speed = FollowShortDistanceUpdate();
+		speed = FollowShortDistanceUpdate(deltaTime);
 	}
 
     return speed;
 }
 
-D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate()
+D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
 {
 	D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
 	D3DXVECTOR3 diff = targetLeader->GetPosition() - actor->GetPosition();
 	float distance = diff.x*diff.x + diff.z*diff.z;
 	if (distance >= 1.5f) {
 		state = YellowBallState::FOLLOW_LONG_DISTANCE;
-		return {};
+		path.clear();
 	}
 	D3DXVec3Normalize(&speed, &diff);
 	return speed * distance / 1.5f;
 }
 
-D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate()
+D3DXVECTOR3 YellowBallAI::getFlockSlotPosition(std::shared_ptr<YellowBall> follower)
+{
+	return D3DXVECTOR3();
+}
+
+D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate(float deltaTime)
 {
 	D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
+	if (path.size() == 0) {
+		path = Game::GetInstance()->blackboard->getPath(actor->currentNavMeshItem, targetLeader->GetCurrentNavMeshItem());
+	}
 	if (targetLeaderNavMesh != targetLeader->GetCurrentNavMeshItem()) {
 		targetLeaderNavMesh = targetLeader->GetCurrentNavMeshItem();
 		path.push_back(targetLeaderNavMesh);
@@ -81,7 +90,7 @@ D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate()
 	return speed;
 }
 
-D3DXVECTOR3 YellowBallAI::MoveToUpdate()
+D3DXVECTOR3 YellowBallAI::MoveToUpdate(float deltaTime)
 {
 	D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
 	D3DXVECTOR3 diff = path[0]->GetPosition() - actor->GetPosition();
@@ -103,6 +112,7 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate()
 		if (leader != nullptr) {
 			state = YellowBallState::FOLLOW_LONG_DISTANCE;
 			targetLeader = leader;
+			path = Game::GetInstance()->blackboard->getPath(actor->currentNavMeshItem, targetLeader->GetCurrentNavMeshItem());
 			return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
 		}
 	}
@@ -112,7 +122,7 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate()
 	return speed;
 }
 
-D3DXVECTOR3 YellowBallAI::IdleUpdate()
+D3DXVECTOR3 YellowBallAI::IdleUpdate(float deltaTime)
 {
 	SelectNewGoal();
 	actor->currentNavMeshItem = path[0];

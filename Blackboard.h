@@ -19,6 +19,8 @@ public:
     NavMeshItemsVectorType getPath(std::shared_ptr<NavMeshItem> start, std::shared_ptr<NavMeshItem> end);
 	std::shared_ptr<NavMeshItem> getNextStep(const D3DXVECTOR3& start, std::shared_ptr<NavMeshItem> end);
 	void nominateLeaders();
+	void destroyYellowBall(std::shared_ptr<YellowBall> ball);
+	void createNewYellowBall(const D3DXVECTOR3& position);
 
 	YellowBallVectorType yellowBalls{};
 	YellowBallVectorType yellowBallsLeaders{};

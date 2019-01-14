@@ -5,6 +5,9 @@
 
 YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item) : scale{ ballSize, ballSize, ballSize }
 {
+	static int _id = 0;
+	id = _id++;
+
     position = item->position;
     position.y = 2.0f;
     ai = std::make_shared<YellowBallAI>(this, item);

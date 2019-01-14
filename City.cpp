@@ -108,7 +108,7 @@ bool City::LoadCityFile()
         if (line[0] == '/' && line[1] == '/') { continue; }
         if (line.size() <= 0) { continue; }
 
-        for (int i = 0; i < line.size(); ++i) {
+        for (unsigned int i = 0; i < line.size(); ++i) {
             if (std::isdigit(line[i]) || line[i] == '.') {
                 number += line[i];
             }

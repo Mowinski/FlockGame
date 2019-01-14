@@ -10,6 +10,9 @@
 #include "NavMesh.h"
 #include "LoadingScreen.h"
 #include "Blackboard.h"
+#include "Player.h"
+#include "GameHUD.h"
+#include "LevelGround.h"
 
 class Game {
 public:
@@ -22,7 +25,7 @@ public:
     void Render();
 
     LPDIRECT3DDEVICE9 graphicDevice;
-    std::shared_ptr<City> city;
+	std::shared_ptr<City> city{ nullptr };
     std::shared_ptr<Loader> loader;
     std::shared_ptr<NavMesh> navMesh;
     std::unique_ptr<Blackboard> blackboard;
@@ -38,11 +41,13 @@ private:
 
     static Game* game;
 
-	int ballsCount{ 6 };
+	int ballsCount{ 2 };
     bool isLoading{ true };
     std::string levelFilename;
-    std::vector<std::shared_ptr<Renderable>> actors;
-    std::shared_ptr<Timer> timer;
-    std::shared_ptr<LoadingScreen> loadingScreen;
+	std::shared_ptr<Player> player{ nullptr };
+	std::shared_ptr<GameHUD> hud{ nullptr };
+    std::shared_ptr<Timer> timer{ nullptr };
+	std::shared_ptr<LevelGround> levelGround{ nullptr };
+    std::shared_ptr<LoadingScreen> loadingScreen{ nullptr };
     std::thread* loadingThread;
 };

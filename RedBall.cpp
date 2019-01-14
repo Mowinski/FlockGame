@@ -4,7 +4,7 @@
 #include "RedBallAI.h"
 #include <limits>
 
-RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 255.0f }
+RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 25.0f }
 {
 	ai = std::make_shared<RedBallAI>(this);
 }
@@ -30,7 +30,7 @@ void RedBall::OnUpdate(float deltaTime)
 	D3DXVECTOR3 speedNorm{};
 	float speedValue = D3DXVec3Length(&speed);
 	D3DXVec3Normalize(&speedNorm, &speed);
-	D3DXVECTOR3 airResistance = - 0.001 * speedValue * speedValue * speedNorm;
+	D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speedValue * speedNorm;
 	
 	speed += (force + airResistance + gravity) / weight * deltaTime;
 	D3DXVECTOR3 newPosition{ position + speed * deltaTime };
@@ -44,6 +44,15 @@ void RedBall::OnUpdate(float deltaTime)
 		newPosition = position + speed * deltaTime;
 	}
 	position = newPosition;
+
+	std::shared_ptr<YellowBall> nearestBall = Game::GetInstance()->blackboard->getNearestBall(position);
+	if (nearestBall != nullptr) {
+		float distance = D3DXVec3Length(&(nearestBall->GetPosition() - position));
+		if (distance <= 2 * ballSize) {
+			Game::GetInstance()->blackboard->destroyYellowBall(nearestBall);
+			ai->AddEnergy(5.0f);
+		}
+	}
 }
 
 bool RedBall::OnInit()

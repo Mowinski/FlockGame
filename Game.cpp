@@ -1,8 +1,6 @@
 #include "Game.h"
-#include "LevelGround.h"
 #include "YellowBall.h"
-#include "Player.h"
-#include "GameHUD.h"
+
 #include <cstdlib>
 #include <ctime>
 
@@ -39,11 +37,17 @@ void Game::Update(float deltaTime)
 
     timer->updateTime(deltaTime);
     if (!timer->canStartNextFrame()) { return; }
+	float timeSinceLastFrame = timer->getDeltaTime();
 
-    for (auto actor : actors) {
-        actor->OnUpdate(timer->getDeltaTime());
-    }
-    timer->clearTimeSinceLastRender();
+	player->OnUpdate(timeSinceLastFrame);
+	hud->OnUpdate(timeSinceLastFrame);
+	levelGround->OnUpdate(timeSinceLastFrame);
+	city->OnUpdate(timeSinceLastFrame);
+	for (auto ball : blackboard->yellowBalls) {
+		ball->OnUpdate(timeSinceLastFrame);
+	}
+
+	timer->clearTimeSinceLastRender();
 }
 
 void Game::Render()
@@ -52,10 +56,14 @@ void Game::Render()
         loadingScreen->OnRender();
         return;
     }
-    for (auto actor : actors) {
-        actor->OnRender();
-    }
+	player->OnRender();
+	hud->OnRender();
+	levelGround->OnRender();
+	city->OnRender();
 	navMesh->OnRender();
+	for (auto ball : blackboard->yellowBalls) {
+		ball->OnRender();
+	}
 }
 
 bool Game::RetrieveGraphicDevice()
@@ -71,8 +79,8 @@ bool Game::PrepareLevel(const std::string& filename)
 {
     city = std::make_shared<City>(filename);
     if (!city->OnInit()) { return false; }
-    actors.push_back(std::make_shared<LevelGround>(city->getMapWidth(), city->getMapHeight()));
-    actors.push_back(city);
+	levelGround = std::make_shared<LevelGround>(city->getMapWidth(), city->getMapHeight());
+	if (!levelGround->OnInit()) { return false; }
     return true;
 }
 
@@ -88,7 +96,6 @@ bool Game::PrepareInitialYellowBalls()
     for (int i = 0; i < ballsCount; i++) {
         auto ball = std::make_shared<YellowBall>(navMesh->getRandom());
         if (!ball->OnInit()) { return false; }
-        actors.push_back(ball);
         blackboard->yellowBalls.push_back(ball);
     }
 	blackboard->nominateLeaders();
@@ -98,21 +105,20 @@ bool Game::PrepareInitialYellowBalls()
 
 void Game::Loading()
 {
-	std::srand(std::time(nullptr));
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
     const int delayTime = 10;
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PLAYER;
-    actors.push_back(std::make_shared<Player>());
+    player = std::make_shared<Player>();
+	player->OnInit();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::GAME_HUD;
-    actors.push_back(std::make_shared<GameHUD>());
+    hud = std::make_shared<GameHUD>();
+	hud->OnInit();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
-    for (auto actor : actors) {
-        if (!actor->OnInit()) { return; }
-    }
     loadingScreen->state = LoadingState::PREPARE_LEVEL;
     if (!PrepareLevel(levelFilename)) { return; }
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));

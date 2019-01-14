@@ -16,7 +16,7 @@ public:
     ~Player();
 
 protected:
-    const float eyeHeightPosition = 1.0f;
+    const float eyeHeightPosition = 0.9f;
 
     D3DXVECTOR3 eyePosition{ 0.0f, eyeHeightPosition, 0.0f };
     D3DXVECTOR3 lookDir{ 1.0f, 0.0f, 0.0f };

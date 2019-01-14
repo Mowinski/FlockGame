@@ -25,9 +25,9 @@ protected:
 	const float weight = 0.1f;
 	const float ballSize = 0.2f;
 
-	const D3DXVECTOR3 gravity{ 0.0f, -9.0f, 0.0f };
+	const D3DXVECTOR3 gravity{ 0.0f, -0.9f, 0.0f };
     const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };
-    const D3DXVECTOR3 scale{ 0.2f, 0.2f, 0.2f };
+    const D3DXVECTOR3 scale{ ballSize, ballSize, ballSize };
     const D3DXVECTOR4 color{ 1.0f, 0.0f, 0.0f, 1.0f };
 
 	std::shared_ptr<RedBallAI> ai;

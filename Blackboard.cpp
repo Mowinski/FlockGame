@@ -1,4 +1,5 @@
 #include "Blackboard.h"
+#include "Game.h"
 
 #include <algorithm>
 #include <map>
@@ -33,7 +34,7 @@ std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance,
 
 std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3& position) const
 {
-    std::shared_ptr<YellowBall> ret;
+	std::shared_ptr<YellowBall> ret{ nullptr };
 	float minLength = (std::numeric_limits<float>::max)();
 	for (auto ball : yellowBalls) {
 		float diff = D3DXVec3Length(&(ball->GetPosition() - position));
@@ -125,7 +126,7 @@ std::shared_ptr<NavMeshItem> Blackboard::getNextStep(const D3DXVECTOR3 & start, 
 void Blackboard::nominateLeaders()
 {
 	size_t ballsCount = yellowBalls.size();
-	int leadersCount = std::ceil(ballsCount / 5.0f);
+	int leadersCount = std::ceil(static_cast<float>(ballsCount) / 5.0f);
 	yellowBallsLeaders.clear();
 	for (auto ball : yellowBalls) {
 		ball->UnsetLeader();
@@ -136,4 +137,23 @@ void Blackboard::nominateLeaders()
 		(*it)->SetLeader();
 		yellowBallsLeaders.push_back(*it);
 	}
+}
+
+void Blackboard::destroyYellowBall(std::shared_ptr<YellowBall> ball)
+{
+	auto it = std::find(yellowBalls.begin(), yellowBalls.end(), ball);
+	if (it != yellowBalls.end()) {
+		yellowBalls.erase(it);
+	}
+
+	it = std::find(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), ball);
+	if (it != yellowBallsLeaders.end()) {
+		yellowBallsLeaders.erase(it);
+		nominateLeaders();
+	}
+}
+
+void Blackboard::createNewYellowBall(const D3DXVECTOR3 & position)
+{
+
 }

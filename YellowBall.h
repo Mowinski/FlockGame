@@ -24,6 +24,7 @@ public:
 	void SetLeader();
 	void UnsetLeader();
 
+	int id{ 0 };
 protected:
     D3DXVECTOR3 position;
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };

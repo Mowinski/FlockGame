@@ -24,10 +24,10 @@ public:
 protected:
     void SelectNewGoal();
 
-	D3DXVECTOR3 MoveToUpdate();
-	D3DXVECTOR3 IdleUpdate();
-	D3DXVECTOR3 FollowLongDistanceUpdate();
-	D3DXVECTOR3 FollowShortDistanceUpdate();
+	D3DXVECTOR3 MoveToUpdate(float deltaTime);
+	D3DXVECTOR3 IdleUpdate(float deltaTime);
+	D3DXVECTOR3 FollowLongDistanceUpdate(float deltaTime);
+	D3DXVECTOR3 FollowShortDistanceUpdate(float deltaTime);
 
     YellowBallState state;
     std::shared_ptr<NavMesh> navMesh;
@@ -36,5 +36,8 @@ protected:
     YellowBall* actor;
 	std::shared_ptr<YellowBall> targetLeader{ nullptr };
 	std::shared_ptr<NavMeshItem> targetLeaderNavMesh{ nullptr };
+	YellowBallVectorType followers;
+
+	D3DXVECTOR3 getFlockSlotPosition(std::shared_ptr<YellowBall> follower);
 };
 

@@ -12,6 +12,7 @@ public:
 	~RedBallAI();
 
 	D3DXVECTOR3 OnUpdate(float deltaTime);
+	void AddEnergy(float inc);
 
 protected:
 	float energy{ 100.0f };

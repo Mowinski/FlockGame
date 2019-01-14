@@ -53,7 +53,9 @@
     <ClCompile Include="RedBall.cpp">
       <Filter>Renderable\Balls</Filter>
     </ClCompile>
-    <ClCompile Include="RedBallAI.cpp" />
+    <ClCompile Include="RedBallAI.cpp">
+      <Filter>AI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -111,7 +113,9 @@
     <ClInclude Include="RedBall.h">
       <Filter>Renderable\Balls</Filter>
     </ClInclude>
-    <ClInclude Include="RedBallAI.h" />
+    <ClInclude Include="RedBallAI.h">
+      <Filter>AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Renderable">

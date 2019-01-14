@@ -16,13 +16,13 @@ GameHUD::~GameHUD()
 void GameHUD::OnRender()
 {
     D3DCOLOR Red = D3DCOLOR_XRGB(255, 0, 0);
-    DrawRect(crosshairPlace.x - 20, crosshairPlace.y, 40, 2, Red);
-    DrawRect(crosshairPlace.x, crosshairPlace.y- 20, 2, 40, Red);
+    DrawRect(static_cast<int>(crosshairPlace.x) - 20, static_cast<int>(crosshairPlace.y), 40, 2, Red);
+    DrawRect(static_cast<int>(crosshairPlace.x), static_cast<int>(crosshairPlace.y)- 20, 2, 40, Red);
 
-	RECT font_rect{ ammoPlace.x - 80, ammoPlace.y, ammoPlace.x, ammoPlace.y + 50 };
+	RECT font_rect{ static_cast<int>(ammoPlace.x) - 80, static_cast<int>(ammoPlace.y), static_cast<int>(ammoPlace.x), static_cast<int>(ammoPlace.y) + 50 };
 	font->DrawText(NULL, "Ammo", -1, &font_rect, DT_CENTER | DT_VCENTER | DT_NOCLIP, Red);
 	if (!Game::GetInstance()->blackboard->isPlayerReloading) {
-		DrawRect(ammoPlace.x, ammoPlace.y, 20, 50, Red);
+		DrawRect(static_cast<int>(ammoPlace.x), static_cast<int>(ammoPlace.y), 20, 50, Red);
 	}
 }
 
@@ -37,8 +37,8 @@ bool GameHUD::OnInit()
     crosshairPlace.x = static_cast<float>(viewport.Width / 2);
     crosshairPlace.y = static_cast<float>(viewport.Height / 2);
 
-	ammoPlace.x = viewport.Width - 80;
-	ammoPlace.y = viewport.Height - 60;
+	ammoPlace.x = viewport.Width - 80.0f;
+	ammoPlace.y = viewport.Height - 60.0f;
 
 	HRESULT hr = D3DXCreateFont(Game::GetInstance()->graphicDevice,
 		34,
