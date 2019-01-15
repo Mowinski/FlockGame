@@ -55,7 +55,7 @@ void RedBall::checkHitWithYellowBall()
         float distance = D3DXVec3Length(&(nearestBall->GetPosition() - position));
         if (distance <= 2 * ballSize) {
             Game::GetInstance()->blackboard->destroyYellowBall(nearestBall);
-            ai->AddEnergy(5.0f);
+            ai->AddEnergy(Game::GetInstance()->blackboard->extraEnergyAfterHiting);
             ai->FindNewBall();
         }
     }
@@ -103,7 +103,7 @@ void RedBall::unsetTarget()
     ai->target = nullptr;
 }
 
-bool RedBall::hasEnergy() const
+bool RedBall::isDead() const
 {
-    return ai->energy > 0.0f && position.y > groundLevel;
+    return position.y > groundLevel;
 }

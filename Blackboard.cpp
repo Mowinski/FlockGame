@@ -171,7 +171,7 @@ void Blackboard::createNewYellowBall(const D3DXVECTOR3 & position)
 
 void Blackboard::clearRedBalls()
 {
-    auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return !item->hasEnergy(); });
+    auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return !item->isDead(); });
 
     if (redBallIt != redBalls.end()) {
         createNewYellowBall((*redBallIt)->GetPosition());

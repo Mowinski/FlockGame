@@ -27,5 +27,9 @@ public:
     YellowBallVectorType yellowBallsLeaders{};
     RedBallVectorType redBalls{};
     std::shared_ptr<NavMesh> navMesh;
+
+	const float extraEnergyAfterHiting = 0.3f;
+	const float stargingEnergy = 5.0f;
+	const float maxRedBallSpeed = 10.0f;
     bool isPlayerReloading{ false };
 };

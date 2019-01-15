@@ -20,7 +20,7 @@ public:
     D3DXVECTOR3 FindNormal(const D3DXVECTOR3& speedNorm) const;
     std::shared_ptr<YellowBall> getCurrentTarget() const;
     void unsetTarget();
-    bool hasEnergy() const;
+    bool isDead() const;
 
 protected:
     D3DXVECTOR3 position;

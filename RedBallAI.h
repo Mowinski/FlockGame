@@ -1,6 +1,7 @@
 #pragma once
 #include "RedBall.h"
 #include "YellowBall.h"
+#include "Game.h"
 
 #include <d3dx9.h>
 #include <limits>
@@ -15,7 +16,7 @@ public:
     void FindNewBall();
 
 protected:
-    float energy{ 100.0f };
+    float energy{ Game::GetInstance()->blackboard->stargingEnergy };
     float distanceToTarget{ (std::numeric_limits<float>::max)() };
     std::shared_ptr<YellowBall> target;
 
