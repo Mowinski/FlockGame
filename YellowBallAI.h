@@ -2,6 +2,7 @@
 #include "NavMesh.h"
 #include "NavMeshItem.h"
 #include "YellowBall.h"
+#include "Game.h"
 
 #include <memory>
 #include <random>
@@ -17,10 +18,9 @@ enum YellowBallState {
 class YellowBallAI {
 public:
     YellowBallAI(YellowBall* _actor, std::shared_ptr<NavMeshItem> item);
-    ~YellowBallAI();
+    ~YellowBallAI() = default;
 
     D3DXVECTOR3 OnUpdate(float deltaTime);
-    std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
     void nominateToLeader();
 
 protected:
@@ -35,8 +35,8 @@ protected:
 
     float desiredHeight{ 2.0f };
     float timeSinceLastChangedHeight{ 0.0f };
-    YellowBallState state;
-    std::shared_ptr<NavMesh> navMesh;
+	YellowBallState state{ YellowBallState::IDLE };
+	std::shared_ptr<NavMesh> navMesh{ Game::GetInstance()->navMesh };
     std::shared_ptr<NavMeshItem> goal;
     NavMeshItemsVectorType path;
     YellowBall* actor;
@@ -47,5 +47,7 @@ protected:
     std::uniform_real_distribution<float> heightDist{ 1.0f, 10.0f };
 
     D3DXVECTOR3 getFlockSlotPosition(std::shared_ptr<YellowBall> follower);
+
+	friend class YellowBall;
 };
 

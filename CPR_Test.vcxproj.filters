@@ -56,6 +56,9 @@
     <ClCompile Include="RedBallAI.cpp">
       <Filter>AI</Filter>
     </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPR_Framework.h" />
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="RedBallAI.h">
       <Filter>AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

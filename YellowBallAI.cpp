@@ -1,29 +1,18 @@
 #include "YellowBallAI.h"
-#include "Game.h"
+#include "Utils.h"
+
 #include <algorithm>
 #include <sstream>
 
 YellowBallAI::YellowBallAI(YellowBall* _actor, std::shared_ptr<NavMeshItem> item) :
-    navMesh(Game::GetInstance()->navMesh),
-    state(YellowBallState::MOVE_TO),
     goal(item),
     actor(_actor)
 {
-    SelectNewGoal();
-    actor->currentNavMeshItem = path[0];
 }
 
-YellowBallAI::~YellowBallAI()
-{
-}
-
-#include <sstream>
 D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 {
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
-    std::ostringstream oss;
-    oss << "State: " << state << std::endl;
-    OutputDebugString(oss.str().c_str());
 
     if (state == YellowBallState::IDLE) {
         speed = IdleUpdate(deltaTime);
@@ -31,7 +20,7 @@ D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 
     if (state == YellowBallState::MOVE_TO) {
         if (timeSinceLastChangedHeight > 10.0f) {
-            desiredHeight = GetRandomHeight();
+			desiredHeight = GetRandomHeight();
             timeSinceLastChangedHeight = 0.0f;
         }
         timeSinceLastChangedHeight += deltaTime;
@@ -59,7 +48,7 @@ D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
     desiredHeight = targetLeader->GetPosition().y;
 
     float distance = diff.x*diff.x + diff.z*diff.z;
-    if (distance >= 1.5f) {
+    if (distance > 1.5f) {
         state = YellowBallState::FOLLOW_LONG_DISTANCE;
         path.clear();
     }
@@ -84,7 +73,7 @@ D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate(float deltaTime)
 {
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     if (path.size() == 0) {
-        path = Game::GetInstance()->blackboard->getPath(actor->currentNavMeshItem, targetLeader->GetCurrentNavMeshItem());
+        path = Game::GetInstance()->blackboard->getPath(actor->GetCurrentNavMeshItem(), targetLeader->GetCurrentNavMeshItem());
     }
     if (targetLeaderNavMesh != targetLeader->GetCurrentNavMeshItem()) {
         targetLeaderNavMesh = targetLeader->GetCurrentNavMeshItem();
@@ -94,7 +83,7 @@ D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate(float deltaTime)
     D3DXVECTOR3 diff = targetLeader->GetPosition() - actor->GetPosition();
     float distance = diff.x*diff.x + diff.z*diff.z;
 
-    if (distance < 1.5f) {
+    if (distance < 1.0f) {
         state = YellowBallState::FOLLOW_SHORT_DISTANCE;
         return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
     }
@@ -120,21 +109,18 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate(float deltaTime)
 
     if (distance < 0.1f && path.size() > 0) {
         path.erase(path.begin());
-        if (path.size() > 0) {
-            actor->currentNavMeshItem = *path.begin();
-        }
     }
     if (distance < 0.1f && path.size() == 0) {
         state = YellowBallState::IDLE;
         return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
     }
 
-    if (!actor->isLeader) {
+    if (!actor->isLeader && targetLeader == nullptr) {
         std::shared_ptr<YellowBall> leader = actor->seeAnyLeader();
         if (leader != nullptr) {
             state = YellowBallState::FOLLOW_LONG_DISTANCE;
             targetLeader = leader;
-            path = Game::GetInstance()->blackboard->getPath(actor->currentNavMeshItem, targetLeader->GetCurrentNavMeshItem());
+            path = Game::GetInstance()->blackboard->getPath(actor->GetCurrentNavMeshItem(), targetLeader->GetCurrentNavMeshItem());
             return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
         }
     }
@@ -155,15 +141,8 @@ void YellowBallAI::MoveToHeightUpdate(float deltaTime, D3DXVECTOR3 & speed)
 D3DXVECTOR3 YellowBallAI::IdleUpdate(float deltaTime)
 {
     SelectNewGoal();
-    actor->currentNavMeshItem = path[0];
     state = YellowBallState::MOVE_TO;
-
     return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
-}
-
-std::shared_ptr<NavMeshItem> YellowBallAI::GetCurrentNavMeshItem() const
-{
-    return actor->currentNavMeshItem;
 }
 
 void YellowBallAI::nominateToLeader()
@@ -175,8 +154,8 @@ void YellowBallAI::SelectNewGoal()
 {
     static float minimumDistance = (std::min)(Game::GetInstance()->city->getMapHeight(), Game::GetInstance()->city->getMapWidth()) * 0.35f;
 
-    std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(minimumDistance, goal->position.x,
-                                           goal->position.z);
-    path = Game::GetInstance()->blackboard->getPath(goal, newGoal);
+	std::shared_ptr<NavMeshItem> currentNavMesh = getNearestNavMeshItem(actor->position);
+    std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(minimumDistance, currentNavMesh->position.x, currentNavMesh->position.z);
+    path = Game::GetInstance()->blackboard->getPath(currentNavMesh, newGoal);
     goal = newGoal;
 }

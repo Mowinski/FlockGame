@@ -1,6 +1,7 @@
 #include "YellowBall.h"
 #include "YellowBallAI.h"
 #include "Game.h"
+#include "Utils.h"
 
 
 YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item) : scale{ ballSize, ballSize, ballSize }
@@ -68,18 +69,29 @@ std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
 
 std::shared_ptr<NavMeshItem> YellowBall::GetCurrentNavMeshItem() const
 {
-    return ai->GetCurrentNavMeshItem();
+    return getNearestNavMeshItem(position);
 }
 
 void YellowBall::SetLeader()
 {
     isLeader = true;
     ai->nominateToLeader();
-    color = D3DXVECTOR4(1.0f, 0.0f, 1.0f, 1.0f);
+    color = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void YellowBall::UnsetLeader()
 {
     isLeader = false;
     color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
+}
+
+bool YellowBall::checkTargetLeader(std::shared_ptr<YellowBall> ball) const
+{
+	return ai->targetLeader == ball;
+}
+
+void YellowBall::UnsetTargetLeader()
+{
+	ai->targetLeader = nullptr;
+	ai->state = YellowBallState::IDLE;
 }

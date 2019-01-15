@@ -24,6 +24,8 @@ public:
     std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
     void SetLeader();
     void UnsetLeader();
+	bool checkTargetLeader(std::shared_ptr<YellowBall> ball) const;
+	void UnsetTargetLeader();
 
 protected:
     D3DXVECTOR3 position;
@@ -40,7 +42,6 @@ protected:
 
     std::shared_ptr<YellowBallAI> ai;
     bool isLeader{ false };
-    std::shared_ptr<NavMeshItem> currentNavMeshItem;
 
     friend class YellowBallAI;
 };

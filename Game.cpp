@@ -63,7 +63,7 @@ void Game::Render()
     hud->OnRender();
     levelGround->OnRender();
     city->OnRender();
-    navMesh->OnRender();
+    //navMesh->OnRender();
     for (auto ball : blackboard->yellowBalls) {
         ball->OnRender();
     }

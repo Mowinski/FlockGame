@@ -1,5 +1,6 @@
 #include "Blackboard.h"
 #include "Game.h"
+#include "Utils.h"
 
 #include <algorithm>
 #include <map>
@@ -146,6 +147,12 @@ void Blackboard::destroyYellowBall(std::shared_ptr<YellowBall> ball)
         yellowBalls.erase(it);
     }
 
+	for (auto b : yellowBalls) {
+		if (b->checkTargetLeader(ball)) {
+			b->UnsetTargetLeader();
+		}
+	}
+
     it = std::find(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), ball);
     if (it != yellowBallsLeaders.end()) {
         yellowBallsLeaders.erase(it);
@@ -157,16 +164,11 @@ void Blackboard::destroyYellowBall(std::shared_ptr<YellowBall> ball)
 
 void Blackboard::createNewYellowBall(const D3DXVECTOR3 & position)
 {
-    auto cmpFn = [&position](std::shared_ptr<NavMeshItem> item1, std::shared_ptr<NavMeshItem> item2) {
-        float d1 = D3DXVec3Length(&(item1->position - position));
-        float d2 = D3DXVec3Length(&(item2->position - position));
-        return d1 < d2;
-    };
-    auto navMeshItemIt = std::min_element(navMesh->navMeshItems.begin(), navMesh->navMeshItems.end(), cmpFn);
-
-    auto yellowBall = std::make_shared<YellowBall>(*navMeshItemIt, position.y);
+	std::shared_ptr<NavMeshItem> navMeshItem = getNearestNavMeshItem(position);
+    auto yellowBall = std::make_shared<YellowBall>(navMeshItem, 2.0f);
     yellowBalls.push_back(yellowBall);
 }
+
 void Blackboard::clearRedBalls()
 {
     auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return !item->hasEnergy(); });
