@@ -5,8 +5,8 @@
 
 YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item) : scale{ ballSize, ballSize, ballSize }
 {
-	static int _id = 0;
-	id = _id++;
+    static int _id = 0;
+    id = _id++;
 
     position = item->position;
     position.y = 2.0f;
@@ -25,8 +25,8 @@ void YellowBall::OnRender()
 
 void YellowBall::OnUpdate(float deltaTime)
 {
-	speed = ai->OnUpdate(deltaTime);
-	position += speed * deltaTime ;
+    speed = ai->OnUpdate(deltaTime);
+    position += speed * deltaTime ;
 }
 
 bool YellowBall::OnInit()
@@ -41,40 +41,41 @@ D3DXVECTOR3 YellowBall::GetPosition() const
 
 D3DXVECTOR3 YellowBall::GetSpeed() const
 {
-	return speed;
+    return speed;
 }
 
 std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
 {
-	std::shared_ptr<YellowBall> ret = nullptr;
+    std::shared_ptr<YellowBall> ret = nullptr;
 
-	if (D3DXVec3Length(&speed) == 0.0f) return ret;
-	float shortestDistance = visibilityDistance;
+    if (D3DXVec3Length(&speed) == 0.0f) { return ret; }
+    float shortestDistance = visibilityDistance;
 
-	for (auto leader : Game::GetInstance()->blackboard->yellowBallsLeaders) {
-		D3DXVECTOR3 diffVec = leader->GetPosition() - GetPosition();
-		float distance = D3DXVec3Length(&diffVec);
-		if (distance < shortestDistance) {
-			ret = leader;
-			shortestDistance = distance;
-		}
-	}
-	return ret;
+    for (auto leader : Game::GetInstance()->blackboard->yellowBallsLeaders) {
+        D3DXVECTOR3 diffVec = leader->GetPosition() - GetPosition();
+        float distance = D3DXVec3Length(&diffVec);
+        if (distance < shortestDistance) {
+            ret = leader;
+            shortestDistance = distance;
+        }
+    }
+    return ret;
 }
 
 std::shared_ptr<NavMeshItem> YellowBall::GetCurrentNavMeshItem() const
 {
-	return ai->GetCurrentNavMeshItem();
+    return ai->GetCurrentNavMeshItem();
 }
 
 void YellowBall::SetLeader()
 {
-	isLeader = true;
-	color = D3DXVECTOR4(1.0f, 0.0f, 1.0f, 1.0f);
+    isLeader = true;
+    ai->nominateToLeader();
+    color = D3DXVECTOR4(1.0f, 0.0f, 1.0f, 1.0f);
 }
 
 void YellowBall::UnsetLeader()
 {
-	isLeader = false;
-	color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
+    isLeader = false;
+    color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
 }

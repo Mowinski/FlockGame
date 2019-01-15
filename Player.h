@@ -31,8 +31,6 @@ protected:
 
     const float reloadTime{ 3.0f };
     float lastShootTime{ 0.0f };
-    bool isReloading = false;
-    RedBallVectorType redBalls;
 
     void Rotate(float deltaTime);
     void Move(float deltaTime);

@@ -6,7 +6,7 @@
 
 RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 25.0f }
 {
-	ai = std::make_shared<RedBallAI>(this);
+    ai = std::make_shared<RedBallAI>(this);
 }
 
 
@@ -21,43 +21,49 @@ void RedBall::OnRender()
 
 void RedBall::OnUpdate(float deltaTime)
 {
-	if (position.y <= 0.05f) { 
-		position.y = 0.05f;
-		return; 
-	}
+    if (position.y <= groundLevel) {
+        position.y = groundLevel;
+        return;
+    }
 
-	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
-	D3DXVECTOR3 speedNorm{};
-	float speedValue = D3DXVec3Length(&speed);
-	D3DXVec3Normalize(&speedNorm, &speed);
-	D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speedValue * speedNorm;
-	
-	speed += (force + airResistance + gravity) / weight * deltaTime;
-	D3DXVECTOR3 newPosition{ position + speed * deltaTime };
-	
-	bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
-	if (isCollideWithAnyBuilding) {
-		D3DXVECTOR3 normal = FindNormal(speedNorm);
-		D3DXVECTOR3 vn = D3DXVec3Dot(&normal, &speed) * normal;
-		D3DXVECTOR3 vt = speed - vn;
-		speed = vt - vn;
-		newPosition = position + speed * deltaTime;
-	}
-	position = newPosition;
+    D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
+    D3DXVECTOR3 speedNorm{};
+    float speedValue = D3DXVec3Length(&speed);
+    D3DXVec3Normalize(&speedNorm, &speed);
+    D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speedValue * speedNorm;
 
-	std::shared_ptr<YellowBall> nearestBall = Game::GetInstance()->blackboard->getNearestBall(position);
-	if (nearestBall != nullptr) {
-		float distance = D3DXVec3Length(&(nearestBall->GetPosition() - position));
-		if (distance <= 2 * ballSize) {
-			Game::GetInstance()->blackboard->destroyYellowBall(nearestBall);
-			ai->AddEnergy(5.0f);
-		}
-	}
+    speed += (force + airResistance + gravity) / weight * deltaTime;
+    D3DXVECTOR3 newPosition{ position + speed * deltaTime };
+
+    bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
+    if (isCollideWithAnyBuilding) {
+        D3DXVECTOR3 normal = FindNormal(speedNorm);
+        D3DXVECTOR3 vn = D3DXVec3Dot(&normal, &speed) * normal;
+        D3DXVECTOR3 vt = speed - vn;
+        speed = vt - vn;
+        newPosition = position + speed * deltaTime;
+    }
+    position = newPosition;
+
+    checkHitWithYellowBall();
+}
+
+void RedBall::checkHitWithYellowBall()
+{
+    std::shared_ptr<YellowBall> nearestBall = Game::GetInstance()->blackboard->getNearestBall(position);
+    if (nearestBall != nullptr) {
+        float distance = D3DXVec3Length(&(nearestBall->GetPosition() - position));
+        if (distance <= 2 * ballSize) {
+            Game::GetInstance()->blackboard->destroyYellowBall(nearestBall);
+            ai->AddEnergy(5.0f);
+            ai->FindNewBall();
+        }
+    }
 }
 
 bool RedBall::OnInit()
-{	
-	return true;
+{
+    return true;
 }
 
 D3DXVECTOR3 RedBall::GetPosition() const
@@ -67,22 +73,37 @@ D3DXVECTOR3 RedBall::GetPosition() const
 
 D3DXVECTOR3 RedBall::FindNormal(const D3DXVECTOR3 & speedNorm) const
 {
-	/* @TODO Fix it! When angle < 45* */
-	static D3DXVECTOR3 norms[] = {
-		D3DXVECTOR3{1.0f, 0.0f, 0.0f},
-		D3DXVECTOR3{0.0f, 0.0f, 1.0f},
-		D3DXVECTOR3{-1.0f, 0.0f, 0.0f},
-		D3DXVECTOR3{0.0f, 0.0f, -1.0f},
-	};
-	float minDist = (std::numeric_limits<float>::max)();
-	int index = 0;
+    /* @TODO Fix it! When angle < 45* */
+    static D3DXVECTOR3 norms[] = {
+        D3DXVECTOR3{1.0f, 0.0f, 0.0f},
+        D3DXVECTOR3{0.0f, 0.0f, 1.0f},
+        D3DXVECTOR3{-1.0f, 0.0f, 0.0f},
+        D3DXVECTOR3{0.0f, 0.0f, -1.0f},
+    };
+    float minDist = (std::numeric_limits<float>::max)();
+    int index = 0;
 
-	for (int i = 0; i < sizeof(norms); ++i) {
-		float dist = D3DXVec3Length(&(norms[i] - speedNorm));
-		if (dist < minDist) {
-			index = i;
-			minDist = dist;
-		}
-	}
-	return -norms[index];
+    for (int i = 0; i < sizeof(norms); ++i) {
+        float dist = D3DXVec3Length(&(norms[i] - speedNorm));
+        if (dist < minDist) {
+            index = i;
+            minDist = dist;
+        }
+    }
+    return -norms[index];
+}
+
+std::shared_ptr<YellowBall> RedBall::getCurrentTarget() const
+{
+    return ai->target;
+}
+
+void RedBall::unsetTarget()
+{
+    ai->target = nullptr;
+}
+
+bool RedBall::hasEnergy() const
+{
+    return ai->energy > 0.0f && position.y > groundLevel;
 }

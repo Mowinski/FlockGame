@@ -6,11 +6,11 @@
 #include <memory>
 
 enum YellowBallState {
-	IDLE,
+    IDLE,
     MOVE_TO,
     SCARED,
-	FOLLOW_LONG_DISTANCE,
-	FOLLOW_SHORT_DISTANCE,
+    FOLLOW_LONG_DISTANCE,
+    FOLLOW_SHORT_DISTANCE,
 };
 
 class YellowBallAI {
@@ -19,25 +19,26 @@ public:
     ~YellowBallAI();
 
     D3DXVECTOR3 OnUpdate(float deltaTime);
-	std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
+    std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
+    void nominateToLeader();
 
 protected:
     void SelectNewGoal();
 
-	D3DXVECTOR3 MoveToUpdate(float deltaTime);
-	D3DXVECTOR3 IdleUpdate(float deltaTime);
-	D3DXVECTOR3 FollowLongDistanceUpdate(float deltaTime);
-	D3DXVECTOR3 FollowShortDistanceUpdate(float deltaTime);
+    D3DXVECTOR3 MoveToUpdate(float deltaTime);
+    D3DXVECTOR3 IdleUpdate(float deltaTime);
+    D3DXVECTOR3 FollowLongDistanceUpdate(float deltaTime);
+    D3DXVECTOR3 FollowShortDistanceUpdate(float deltaTime);
 
     YellowBallState state;
     std::shared_ptr<NavMesh> navMesh;
     std::shared_ptr<NavMeshItem> goal;
     NavMeshItemsVectorType path;
     YellowBall* actor;
-	std::shared_ptr<YellowBall> targetLeader{ nullptr };
-	std::shared_ptr<NavMeshItem> targetLeaderNavMesh{ nullptr };
-	YellowBallVectorType followers;
+    std::shared_ptr<YellowBall> targetLeader{ nullptr };
+    std::shared_ptr<NavMeshItem> targetLeaderNavMesh{ nullptr };
+    YellowBallVectorType followers;
 
-	D3DXVECTOR3 getFlockSlotPosition(std::shared_ptr<YellowBall> follower);
+    D3DXVECTOR3 getFlockSlotPosition(std::shared_ptr<YellowBall> follower);
 };
 

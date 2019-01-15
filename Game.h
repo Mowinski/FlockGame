@@ -25,7 +25,7 @@ public:
     void Render();
 
     LPDIRECT3DDEVICE9 graphicDevice;
-	std::shared_ptr<City> city{ nullptr };
+    std::shared_ptr<City> city{ nullptr };
     std::shared_ptr<Loader> loader;
     std::shared_ptr<NavMesh> navMesh;
     std::unique_ptr<Blackboard> blackboard;
@@ -41,13 +41,13 @@ private:
 
     static Game* game;
 
-	int ballsCount{ 2 };
+    int ballsCount{ 5 };
     bool isLoading{ true };
     std::string levelFilename;
-	std::shared_ptr<Player> player{ nullptr };
-	std::shared_ptr<GameHUD> hud{ nullptr };
+    std::shared_ptr<Player> player{ nullptr };
+    std::shared_ptr<GameHUD> hud{ nullptr };
     std::shared_ptr<Timer> timer{ nullptr };
-	std::shared_ptr<LevelGround> levelGround{ nullptr };
+    std::shared_ptr<LevelGround> levelGround{ nullptr };
     std::shared_ptr<LoadingScreen> loadingScreen{ nullptr };
     std::thread* loadingThread;
 };

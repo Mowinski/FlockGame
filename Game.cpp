@@ -37,17 +37,20 @@ void Game::Update(float deltaTime)
 
     timer->updateTime(deltaTime);
     if (!timer->canStartNextFrame()) { return; }
-	float timeSinceLastFrame = timer->getDeltaTime();
+    float timeSinceLastFrame = timer->getDeltaTime();
 
-	player->OnUpdate(timeSinceLastFrame);
-	hud->OnUpdate(timeSinceLastFrame);
-	levelGround->OnUpdate(timeSinceLastFrame);
-	city->OnUpdate(timeSinceLastFrame);
-	for (auto ball : blackboard->yellowBalls) {
-		ball->OnUpdate(timeSinceLastFrame);
-	}
-
-	timer->clearTimeSinceLastRender();
+    player->OnUpdate(timeSinceLastFrame);
+    hud->OnUpdate(timeSinceLastFrame);
+    levelGround->OnUpdate(timeSinceLastFrame);
+    city->OnUpdate(timeSinceLastFrame);
+    for (auto ball : blackboard->yellowBalls) {
+        ball->OnUpdate(timeSinceLastFrame);
+    }
+    for (auto ball : blackboard->redBalls) {
+        ball->OnUpdate(timeSinceLastFrame);
+    }
+    blackboard->clearRedBalls();
+    timer->clearTimeSinceLastRender();
 }
 
 void Game::Render()
@@ -56,14 +59,17 @@ void Game::Render()
         loadingScreen->OnRender();
         return;
     }
-	player->OnRender();
-	hud->OnRender();
-	levelGround->OnRender();
-	city->OnRender();
-	navMesh->OnRender();
-	for (auto ball : blackboard->yellowBalls) {
-		ball->OnRender();
-	}
+    player->OnRender();
+    hud->OnRender();
+    levelGround->OnRender();
+    city->OnRender();
+    navMesh->OnRender();
+    for (auto ball : blackboard->yellowBalls) {
+        ball->OnRender();
+    }
+    for (auto ball : blackboard->redBalls) {
+        ball->OnRender();
+    }
 }
 
 bool Game::RetrieveGraphicDevice()
@@ -79,8 +85,8 @@ bool Game::PrepareLevel(const std::string& filename)
 {
     city = std::make_shared<City>(filename);
     if (!city->OnInit()) { return false; }
-	levelGround = std::make_shared<LevelGround>(city->getMapWidth(), city->getMapHeight());
-	if (!levelGround->OnInit()) { return false; }
+    levelGround = std::make_shared<LevelGround>(city->getMapWidth(), city->getMapHeight());
+    if (!levelGround->OnInit()) { return false; }
     return true;
 }
 
@@ -98,25 +104,25 @@ bool Game::PrepareInitialYellowBalls()
         if (!ball->OnInit()) { return false; }
         blackboard->yellowBalls.push_back(ball);
     }
-	blackboard->nominateLeaders();
+    blackboard->nominateLeaders();
     return true;
 }
 
 
 void Game::Loading()
 {
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
     const int delayTime = 10;
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PLAYER;
     player = std::make_shared<Player>();
-	player->OnInit();
+    player->OnInit();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::GAME_HUD;
     hud = std::make_shared<GameHUD>();
-	hud->OnInit();
+    hud->OnInit();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PREPARE_LEVEL;
