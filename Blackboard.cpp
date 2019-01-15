@@ -164,7 +164,7 @@ void Blackboard::createNewYellowBall(const D3DXVECTOR3 & position)
     };
     auto navMeshItemIt = std::min_element(navMesh->navMeshItems.begin(), navMesh->navMeshItems.end(), cmpFn);
 
-    auto yellowBall = std::make_shared<YellowBall>(*navMeshItemIt);
+    auto yellowBall = std::make_shared<YellowBall>(*navMeshItemIt, position.y);
     yellowBalls.push_back(yellowBall);
 }
 void Blackboard::clearRedBalls()

@@ -1,7 +1,7 @@
 #include "YellowBallAI.h"
 #include "Game.h"
 #include <algorithm>
-#include <random>
+#include <sstream>
 
 YellowBallAI::YellowBallAI(YellowBall* _actor, std::shared_ptr<NavMeshItem> item) :
     navMesh(Game::GetInstance()->navMesh),
@@ -17,15 +17,27 @@ YellowBallAI::~YellowBallAI()
 {
 }
 
+#include <sstream>
 D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 {
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
+    std::ostringstream oss;
+    oss << "State: " << state << std::endl;
+    OutputDebugString(oss.str().c_str());
+
     if (state == YellowBallState::IDLE) {
         speed = IdleUpdate(deltaTime);
     }
 
     if (state == YellowBallState::MOVE_TO) {
+        if (timeSinceLastChangedHeight > 10.0f) {
+            desiredHeight = GetRandomHeight();
+            timeSinceLastChangedHeight = 0.0f;
+        }
+        timeSinceLastChangedHeight += deltaTime;
+
         speed = MoveToUpdate(deltaTime);
+        MoveToHeightUpdate(deltaTime, speed);
     }
 
     if (state == YellowBallState::FOLLOW_LONG_DISTANCE) {
@@ -34,6 +46,7 @@ D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 
     if (state == YellowBallState::FOLLOW_SHORT_DISTANCE) {
         speed = FollowShortDistanceUpdate(deltaTime);
+        MoveToHeightUpdate(deltaTime, speed);
     }
 
     return speed;
@@ -43,13 +56,23 @@ D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
 {
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     D3DXVECTOR3 diff = targetLeader->GetPosition() - actor->GetPosition();
+    desiredHeight = targetLeader->GetPosition().y;
+
     float distance = diff.x*diff.x + diff.z*diff.z;
     if (distance >= 1.5f) {
         state = YellowBallState::FOLLOW_LONG_DISTANCE;
         path.clear();
     }
     D3DXVec3Normalize(&speed, &diff);
-    return speed * distance / 1.5f;
+    speed.y = 0.0f;
+    return speed * distance / 1.3f;
+}
+
+float YellowBallAI::GetRandomHeight() const
+{
+    static std::random_device rd;
+    static std::mt19937 e2(rd());
+    return heightDist(e2);
 }
 
 D3DXVECTOR3 YellowBallAI::getFlockSlotPosition(std::shared_ptr<YellowBall> follower)
@@ -119,6 +142,14 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate(float deltaTime)
     D3DXVec3Normalize(&speed, &diff);
 
     return speed;
+}
+
+void YellowBallAI::MoveToHeightUpdate(float deltaTime, D3DXVECTOR3 & speed)
+{
+    float diff = desiredHeight - actor->GetPosition().y;
+    if (std::fabs(diff) > 0.1f) {
+        speed.y = diff / std::fabs(diff);
+    }
 }
 
 D3DXVECTOR3 YellowBallAI::IdleUpdate(float deltaTime)
