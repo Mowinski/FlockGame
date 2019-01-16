@@ -12,39 +12,37 @@ YellowBallAI::YellowBallAI(YellowBall* _actor, std::shared_ptr<NavMeshItem> item
 
 D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 {
-    D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
+    D3DXVECTOR3 force{ 0.0f, 0.0f, 0.0f };
 
     if (state == YellowBallState::IDLE) {
-        speed = IdleUpdate(deltaTime);
+		force = IdleUpdate(deltaTime);
     }
 
     if (state == YellowBallState::MOVE_TO) {
         if (timeSinceLastChangedHeight > 10.0f) {
-			desiredHeight = GetRandomHeight();
+			desiredHeight = 2.0f; // GetRandomHeight();
             timeSinceLastChangedHeight = 0.0f;
         }
         timeSinceLastChangedHeight += deltaTime;
-
-        speed = MoveToUpdate(deltaTime);
-        MoveToHeightUpdate(deltaTime, speed);
+		force = MoveToUpdate(deltaTime);
     }
 
     if (state == YellowBallState::FOLLOW_LONG_DISTANCE) {
-        speed = FollowLongDistanceUpdate(deltaTime);
+		force = FollowLongDistanceUpdate(deltaTime);
     }
 
     if (state == YellowBallState::FOLLOW_SHORT_DISTANCE) {
-        speed = FollowShortDistanceUpdate(deltaTime);
-        MoveToHeightUpdate(deltaTime, speed);
+		force = FollowShortDistanceUpdate(deltaTime);
     }
 
-    return speed;
+    return force;
 }
 
 D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
 {
+	
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
-    D3DXVECTOR3 diff = targetLeader->GetPosition() - actor->GetPosition();
+    D3DXVECTOR3 diff = getFlockSlotPosition(); - actor->GetPosition();
     desiredHeight = targetLeader->GetPosition().y;
 
     float distance = diff.x*diff.x + diff.z*diff.z;
@@ -54,7 +52,9 @@ D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
     }
     D3DXVec3Normalize(&speed, &diff);
     speed.y = 0.0f;
-    return speed * distance / 1.3f;
+
+	D3DXVECTOR3 desiredPosition = getFlockSlotPosition();
+	return GetSteering(desiredPosition, Game::GetInstance()->blackboard->maxYellowBallSpeed);
 }
 
 float YellowBallAI::GetRandomHeight() const
@@ -64,9 +64,33 @@ float YellowBallAI::GetRandomHeight() const
     return heightDist(e2);
 }
 
-D3DXVECTOR3 YellowBallAI::getFlockSlotPosition(std::shared_ptr<YellowBall> follower)
+D3DXVECTOR3 YellowBallAI::GetSteering(const D3DXVECTOR3 & position, float maxSpeed) const
 {
-    return D3DXVECTOR3();
+	D3DXVECTOR3 diff = position - actor->GetPosition();
+	D3DXVec3Normalize(&diff, &diff);
+	D3DXVECTOR3 desired_velocity = diff * maxSpeed;
+	return desired_velocity - actor->speed;
+}
+
+D3DXVECTOR3 YellowBallAI::getFlockSlotPosition()
+{
+	D3DXVECTOR3 leftDir;
+	D3DXVec3Cross(&leftDir, &(targetLeader->speed), &(targetLeader->upDir));
+	if (targetLeader->aquireSlot(0, actor)) {
+		return targetLeader->GetPosition() - leftDir*0.2 - targetLeader->speed*0.2;
+	}
+	else if (targetLeader->aquireSlot(1, actor)) {
+		return targetLeader->GetPosition() + leftDir * 0.2 - targetLeader->speed*0.2;
+	}
+	else if (targetLeader->aquireSlot(2, actor)) {
+		return targetLeader->GetPosition() - leftDir * 0.4 - targetLeader->speed*0.4;
+	}
+	else if (targetLeader->aquireSlot(3, actor)) {
+		return targetLeader->GetPosition() + leftDir * 0.4 - targetLeader->speed*0.4;
+	}
+
+	// Otherwise follow leader
+	return targetLeader->GetPosition();
 }
 
 D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate(float deltaTime)
@@ -93,17 +117,17 @@ D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate(float deltaTime)
     if (distance < 0.1f) {
         path.erase(path.begin());
     }
+	if (path.size() == 0) {
+		return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
+	}
 
-    diff.y = 0.0f;
-    D3DXVec3Normalize(&speed, &diff);
-    speed *= 1.5f;
-
-    return speed;
+	D3DXVECTOR3 desiredPosition = path[0]->GetPosition();
+	desiredPosition.y = targetLeader->GetPosition().y;
+	return GetSteering(desiredPosition, 1.5f * Game::GetInstance()->blackboard->maxYellowBallSpeed);
 }
 
 D3DXVECTOR3 YellowBallAI::MoveToUpdate(float deltaTime)
 {
-    D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     D3DXVECTOR3 diff = path[0]->GetPosition() - actor->GetPosition();
     float distance = diff.x*diff.x + diff.z*diff.z;
 
@@ -124,18 +148,9 @@ D3DXVECTOR3 YellowBallAI::MoveToUpdate(float deltaTime)
             return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
         }
     }
-    diff.y = 0.0f;
-    D3DXVec3Normalize(&speed, &diff);
-
-    return speed;
-}
-
-void YellowBallAI::MoveToHeightUpdate(float deltaTime, D3DXVECTOR3 & speed)
-{
-    float diff = desiredHeight - actor->GetPosition().y;
-    if (std::fabs(diff) > 0.1f) {
-        speed.y = diff / std::fabs(diff);
-    }
+	D3DXVECTOR3 desiredPosition = path[0]->GetPosition();
+	desiredPosition.y = desiredHeight;
+    return GetSteering(desiredPosition, Game::GetInstance()->blackboard->maxYellowBallSpeed);
 }
 
 D3DXVECTOR3 YellowBallAI::IdleUpdate(float deltaTime)

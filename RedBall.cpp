@@ -30,7 +30,7 @@ void RedBall::OnUpdate(float deltaTime)
     D3DXVECTOR3 speedNorm{};
     float speedValue = D3DXVec3Length(&speed);
     D3DXVec3Normalize(&speedNorm, &speed);
-    D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speedValue * speedNorm;
+    D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speedValue * speedNorm; // @TODO czy mogê wykorzystaæ speed? zamiast speedValue*speedNorm
 
     speed += (force + airResistance + gravity) / weight * deltaTime;
     D3DXVECTOR3 newPosition{ position + speed * deltaTime };

@@ -26,16 +26,21 @@ public:
     void UnsetLeader();
 	bool checkTargetLeader(std::shared_ptr<YellowBall> ball) const;
 	void UnsetTargetLeader();
+	bool aquireSlot(int index, YellowBall* ball);
 
 protected:
     D3DXVECTOR3 position;
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     D3DXVECTOR3 force{ 0.0f, 0.0f, 0.0f };
+	const D3DXVECTOR3 upDir{ 0.0f, 1.0f, 0.0f };
 
     const float visibilityDistance = 100.0f;
 
     const float weight = 0.1f;
     const float ballSize = 0.2f;
+
+	YellowBall* slotAquired[4] = { nullptr, nullptr, nullptr, nullptr };
+
     const D3DXVECTOR3 scale;
     const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };
     D3DXVECTOR4 color{1.0f, 1.0f, 0.0f, 1.0f};

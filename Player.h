@@ -20,6 +20,7 @@ protected:
 
     D3DXVECTOR3 eyePosition{ 0.0f, eyeHeightPosition, 0.0f };
     D3DXVECTOR3 lookDir{ 1.0f, 0.0f, 0.0f };
+
     float mouseSensitivity{ 10.0f };
     float moveSensitivity{ 5.0f };
 
@@ -35,7 +36,7 @@ protected:
     void Rotate(float deltaTime);
     void Move(float deltaTime);
 
-    inline D3DXVECTOR3 GetLeftVector(D3DXVECTOR3 lookDirection) const;
+    inline D3DXVECTOR3 GetLeftVector(const D3DXVECTOR3 &lookDirection) const;
     inline void CenterCursor() const;
     inline D3DXVECTOR2 CalculateMouseDelta() const;
     inline D3DXVECTOR2 CalculateMoveSpeed();

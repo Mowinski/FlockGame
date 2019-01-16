@@ -27,11 +27,11 @@ protected:
     void SelectNewGoal();
 
     D3DXVECTOR3 MoveToUpdate(float deltaTime);
-    void MoveToHeightUpdate(float deltaTime, D3DXVECTOR3& speed);
     D3DXVECTOR3 IdleUpdate(float deltaTime);
     D3DXVECTOR3 FollowLongDistanceUpdate(float deltaTime);
     D3DXVECTOR3 FollowShortDistanceUpdate(float deltaTime);
     float GetRandomHeight() const;
+	D3DXVECTOR3 GetSteering(const D3DXVECTOR3& position, float maxSpeed) const;
 
     float desiredHeight{ 2.0f };
     float timeSinceLastChangedHeight{ 0.0f };
@@ -46,7 +46,7 @@ protected:
 
     std::uniform_real_distribution<float> heightDist{ 1.0f, 10.0f };
 
-    D3DXVECTOR3 getFlockSlotPosition(std::shared_ptr<YellowBall> follower);
+    D3DXVECTOR3 getFlockSlotPosition();
 
 	friend class YellowBall;
 };

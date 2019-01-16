@@ -142,6 +142,7 @@ void Blackboard::nominateLeaders()
 
 void Blackboard::destroyYellowBall(std::shared_ptr<YellowBall> ball)
 {
+	// @TODO usuñ balla ze slotów
     auto it = std::find(yellowBalls.begin(), yellowBalls.end(), ball);
     if (it != yellowBalls.end()) {
         yellowBalls.erase(it);

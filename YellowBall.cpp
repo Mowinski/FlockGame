@@ -30,8 +30,9 @@ void YellowBall::OnRender()
 
 void YellowBall::OnUpdate(float deltaTime)
 {
-    speed = ai->OnUpdate(deltaTime);
-    position += speed * deltaTime ;
+	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
+	speed += force / weight * deltaTime;
+	position += speed * deltaTime;
 }
 
 bool YellowBall::OnInit()
@@ -94,4 +95,20 @@ void YellowBall::UnsetTargetLeader()
 {
 	ai->targetLeader = nullptr;
 	ai->state = YellowBallState::IDLE;
+}
+
+#include <sstream>
+bool YellowBall::aquireSlot(int index, YellowBall* ball)
+{
+	if (slotAquired[index] == ball) {
+		return true;
+	}
+	if (slotAquired[index] == nullptr) {
+		std::ostringstream oss{};
+		oss << "Alokuje slot numer " << index;
+		OutputDebugString(oss.str().c_str());
+		slotAquired[index] = ball;
+		return true;
+	}
+	return false;
 }

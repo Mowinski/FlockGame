@@ -121,9 +121,6 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
     if (IsKeyPressed(Key::KEY_D) || IsKeyPressed(KEY_RIGHT)) {
         speedAhead = -moveSensitivity;
     }
-    if (IsKeyPressed(Key::KEY_RETURN)) {
-        DEBUG_PrintEyePosition();
-    }
     if (LeftMouseButton() && !Game::GetInstance()->blackboard->isPlayerReloading) {
         std::shared_ptr<RedBall> ball = std::make_shared<RedBall>(eyePosition, lookDir);
         ball->OnInit();
@@ -151,7 +148,7 @@ D3DXVECTOR3 Player::CalculateYRotateForVector(float angle) const
     return newLookDir;
 }
 
-D3DXVECTOR3 Player::GetLeftVector(D3DXVECTOR3 lookDirection) const
+D3DXVECTOR3 Player::GetLeftVector(const D3DXVECTOR3 &lookDirection) const
 {
     D3DXVECTOR3 leftVector;
     D3DXVec3Cross(&leftVector, &lookDirection, &upAxis);
