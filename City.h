@@ -23,6 +23,7 @@ public:
     BuildingVector getBuildingListNear(D3DXVECTOR3 point, float range) const;
     bool isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const;
     bool isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const;
+	std::shared_ptr<Building> getBuildingActorIsColidingWith(const D3DXVECTOR3& point, float range) const;
 
     float getMapWidth() const;
     float getMapHeight() const;
@@ -33,10 +34,6 @@ protected:
 
     std::vector<std::shared_ptr<Building>> buildings;
 
-    /* Load city matrix from file. Skip every line which starts at comment chars '//' or empty line.
-        Every line with data, should contains int number seperated by comma sign ','
-        Return: true if file is valid and data is loaded, otherwise return false
-    */
     bool LoadCityFile();
 
     const float buildingSize = 4.0f;

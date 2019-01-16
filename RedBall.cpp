@@ -27,17 +27,15 @@ void RedBall::OnUpdate(float deltaTime)
     }
 
     D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
-    D3DXVECTOR3 speedNorm{};
-    float speedValue = D3DXVec3Length(&speed);
-    D3DXVec3Normalize(&speedNorm, &speed);
-    D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speedValue * speedNorm; // @TODO czy mogê wykorzystaæ speed? zamiast speedValue*speedNorm
+	float speedValue = D3DXVec3Length(&speed);
+    D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speed;
 
     speed += (force + airResistance + gravity) / weight * deltaTime;
     D3DXVECTOR3 newPosition{ position + speed * deltaTime };
 
-    bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
-    if (isCollideWithAnyBuilding) {
-        D3DXVECTOR3 normal = FindNormal(speedNorm);
+    std::shared_ptr<Building> building = Game::GetInstance()->city->getBuildingActorIsColidingWith(newPosition, 8.0f);
+    if (building != nullptr) {
+        D3DXVECTOR3 normal = building->GetNormalAtPoint(newPosition);
         D3DXVECTOR3 vn = D3DXVec3Dot(&normal, &speed) * normal;
         D3DXVECTOR3 vt = speed - vn;
         speed = vt - vn;
@@ -69,28 +67,6 @@ bool RedBall::OnInit()
 D3DXVECTOR3 RedBall::GetPosition() const
 {
     return position;
-}
-
-D3DXVECTOR3 RedBall::FindNormal(const D3DXVECTOR3 & speedNorm) const
-{
-    /* @TODO Fix it! When angle < 45* */
-    static D3DXVECTOR3 norms[] = {
-        D3DXVECTOR3{1.0f, 0.0f, 0.0f},
-        D3DXVECTOR3{0.0f, 0.0f, 1.0f},
-        D3DXVECTOR3{-1.0f, 0.0f, 0.0f},
-        D3DXVECTOR3{0.0f, 0.0f, -1.0f},
-    };
-    float minDist = (std::numeric_limits<float>::max)();
-    int index = 0;
-
-    for (int i = 0; i < sizeof(norms); ++i) {
-        float dist = D3DXVec3Length(&(norms[i] - speedNorm));
-        if (dist < minDist) {
-            index = i;
-            minDist = dist;
-        }
-    }
-    return -norms[index];
 }
 
 std::shared_ptr<YellowBall> RedBall::getCurrentTarget() const

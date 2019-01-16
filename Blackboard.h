@@ -34,6 +34,6 @@ public:
 	const float maxYellowBallSpeed{ 1.0f };
 	const float scaredMaxYellowBallSpeed{ 10.0f };
 	const float dangerousRadius{ 5.0f };
-	const int startingBallsCount{ 50 };
+	const int startingBallsCount{ 1 };
     bool isPlayerReloading{ false };
 };

@@ -127,7 +127,7 @@ std::shared_ptr<NavMeshItem> Blackboard::getNextStep(const D3DXVECTOR3 & start, 
 void Blackboard::nominateLeaders()
 {
     size_t ballsCount = yellowBalls.size();
-    int leadersCount = std::ceil(static_cast<float>(ballsCount) / 5.0f);
+    int leadersCount = static_cast<int>(std::ceil(static_cast<float>(ballsCount) / 5.0f));
     yellowBallsLeaders.clear();
     for (auto ball : yellowBalls) {
         ball->UnsetLeader();

@@ -73,9 +73,18 @@ bool City::isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const
     return std::any_of(buildings.begin(), buildings.end(), collideCmp);
 }
 
+std::shared_ptr<Building> City::getBuildingActorIsColidingWith(const D3DXVECTOR3 & point, float range) const
+{
+	BuildingVector buildings = getBuildingListNear(point, range);
+	auto collideCmp = [point](std::shared_ptr<Building> b) {return b->isCollide(point); };
+	auto it = std::find_if(buildings.begin(), buildings.end(), collideCmp);
+	if (it == buildings.end()) return nullptr;
+	return *it;
+}
+
 float City::getMapWidth() const
 {
-    return buildingsInRow * 4.0f + (buildingsInRow-1) * 3.0f + 2.0f * cityBorderX;
+    return buildingsInRow * 4.0f + (buildingsInRow - 1) * 3.0f + 2.0f * cityBorderX;
 }
 
 float City::getMapHeight() const
@@ -87,7 +96,6 @@ bool City::isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float ran
 {
     BuildingVector buildings = getBuildingListNear(item->position, range);
     auto collideCmp = [item](std::shared_ptr<Building> b) {return b->isCollide(item->collisionBox); };
-
     return std::any_of(buildings.begin(), buildings.end(), collideCmp);
 }
 

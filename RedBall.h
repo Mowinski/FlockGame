@@ -1,6 +1,7 @@
 #pragma once
 #include "Renderable.h"
 #include "YellowBall.h"
+#include "Building.h"
 
 #include <vector>
 #include <memory>
@@ -17,7 +18,6 @@ public:
     void checkHitWithYellowBall();
     bool OnInit() override;
     D3DXVECTOR3 GetPosition() const override;
-    D3DXVECTOR3 FindNormal(const D3DXVECTOR3& speedNorm) const;
     std::shared_ptr<YellowBall> getCurrentTarget() const;
     void unsetTarget();
     bool isDead() const;

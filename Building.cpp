@@ -27,6 +27,18 @@ void Building::OnRender()
 
 bool Building::OnInit()
 {
+	const float halfSize = buildingSize / 2.0f;
+	const float halfHeight = height / 2.0f;
+
+	wallCenter[BuildingWall::NORTH] = D3DXVECTOR3{ position.x + halfSize, halfHeight, position.z };
+	wallCenter[BuildingWall::SOUTH] = D3DXVECTOR3{ position.x - halfSize, halfHeight, position.z };
+	wallCenter[BuildingWall::EAST] = D3DXVECTOR3{ position.x, halfHeight, position.z - halfSize };
+	wallCenter[BuildingWall::WEST] = D3DXVECTOR3{ position.x, halfHeight, position.z + halfSize };
+
+	normals[BuildingWall::NORTH] = D3DXVECTOR3{ 1.0f, 0.0f, 0.0f };
+	normals[BuildingWall::SOUTH] = D3DXVECTOR3{ -1.0f, 0.0f, 0.0f };
+	normals[BuildingWall::EAST] = D3DXVECTOR3{ 0.0f, 0.0f, -1.0f };
+	normals[BuildingWall::WEST] = D3DXVECTOR3{ 0.0f, 0.0f, 1.0f };
     return true;
 }
 
@@ -47,12 +59,21 @@ bool Building::isCollide(const AABBCollisionBox& box) const
     return collisionBox.isCollide(box);
 }
 
-void Building::changeColor(D3DXVECTOR4 _color)
-{
-    color = _color;
-}
-
 D3DXVECTOR3 Building::GetPosition() const
 {
     return position;
+}
+
+D3DXVECTOR3 Building::GetNormalAtPoint(const D3DXVECTOR3 & point) const
+{
+	float distance = (std::numeric_limits<float>::max)();
+	short int index = -1;
+	for (short int i = 0; i < 4; ++i) {
+		float tmpDistance = D3DXVec3Length(&(wallCenter[i] - point));
+		if (tmpDistance < distance) {
+			index = i;
+			distance = tmpDistance;
+		}
+	}
+	return normals[index];
 }

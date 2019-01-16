@@ -121,6 +121,9 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
     if (IsKeyPressed(Key::KEY_D) || IsKeyPressed(KEY_RIGHT)) {
         speedAhead = -moveSensitivity;
     }
+	if (IsKeyPressed(Key::KEY_RETURN)) {
+		DEBUG_PrintEyePosition();
+	}
     if (LeftMouseButton() && !Game::GetInstance()->blackboard->isPlayerReloading) {
         std::shared_ptr<RedBall> ball = std::make_shared<RedBall>(eyePosition, lookDir);
         ball->OnInit();
