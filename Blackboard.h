@@ -30,9 +30,10 @@ public:
 
 	const float extraEnergyAfterHiting{ 0.3f };
 	const float stargingEnergy{ 5.0f };
-	const float maxRedBallSpeed{ 10.0f };
+	const float maxRedBallSpeed{ 15.0f };
 	const float maxYellowBallSpeed{ 1.0f };
+	const float scaredMaxYellowBallSpeed{ 10.0f };
 	const float dangerousRadius{ 5.0f };
-	const int startingBallsCount{ 5 };
+	const int startingBallsCount{ 50 };
     bool isPlayerReloading{ false };
 };

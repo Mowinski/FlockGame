@@ -16,7 +16,7 @@ D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 
 	if (isDangerDetected()) {
 		state = YellowBallState::SCARED;
-		SelectNewGoal();
+		CreateEscapePath();
 	}
 
     if (state == YellowBallState::IDLE) {
@@ -79,14 +79,14 @@ D3DXVECTOR3 YellowBallAI::ScaredUpdate(float deltaTime)
 
 	D3DXVECTOR3 desiredPosition = path[0]->GetPosition();
 	desiredPosition.y = desiredHeight;
-	return GetSteering(desiredPosition, Game::GetInstance()->blackboard->maxYellowBallSpeed * 20.0f);
+	return GetSteering(desiredPosition, Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed);
 }
 
 float YellowBallAI::GetRandomHeight() const
 {
     static std::random_device rd;
-    static std::mt19937 e2(rd());
-    return heightDist(e2);
+    static std::mt19937 gen(rd());
+    return heightDist(gen);
 }
 
 D3DXVECTOR3 YellowBallAI::GetSteering(const D3DXVECTOR3 & position, float maxSpeed) const
@@ -208,4 +208,18 @@ void YellowBallAI::SelectNewGoal()
     std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(minimumDistance, currentNavMesh->position.x, currentNavMesh->position.z);
     path = Game::GetInstance()->blackboard->getPath(currentNavMesh, newGoal);
     goal = newGoal;
+}
+
+void YellowBallAI::CreateEscapePath()
+{
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+	path.clear();
+
+	int escapeStepNumber = escapeLength(gen);
+	std::shared_ptr<NavMeshItem> currentNavMesh = getNearestNavMeshItem(actor->position);
+	for (int i = 0; i < escapeStepNumber; ++i) {
+		currentNavMesh = currentNavMesh->GetRandomNeighbor();
+		path.push_back(currentNavMesh);
+	}
 }

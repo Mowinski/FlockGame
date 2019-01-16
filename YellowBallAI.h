@@ -25,6 +25,7 @@ public:
 
 protected:
     void SelectNewGoal();
+	void CreateEscapePath();
 
     D3DXVECTOR3 MoveToUpdate(float deltaTime);
     D3DXVECTOR3 IdleUpdate(float deltaTime);
@@ -49,6 +50,7 @@ protected:
     YellowBallVectorType followers;
 
     std::uniform_real_distribution<float> heightDist{ 1.0f, 10.0f };
+	std::uniform_int_distribution<int> escapeLength{ 2, 8 };
 
     D3DXVECTOR3 getFlockSlotPosition();
 
