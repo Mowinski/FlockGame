@@ -1,10 +1,9 @@
 #include "RedBallAI.h"
 #include "Game.h"
+#include <sstream>
 
-
-RedBallAI::RedBallAI(RedBall* _actor) : actor(_actor)
+RedBallAI::RedBallAI(RedBall* _actor) : actor(_actor), target{ nullptr }
 {
-    target = Game::GetInstance()->blackboard->getNearestBall(actor->position);
 }
 
 
@@ -13,11 +12,17 @@ RedBallAI::~RedBallAI()
 }
 
 
-#include <sstream>
 D3DXVECTOR3 RedBallAI::OnUpdate(float deltaTime)
 {
-    if (target == nullptr) { return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
+	float speedValue = D3DXVec3Length(&(actor->speed));
+	if (speedValue > 15.0f) { return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
 	if (energy < 0.0f) { return  D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
+	if (target == nullptr) { 
+		target = Game::GetInstance()->blackboard->getNearestBall(actor->position);
+		if (target == nullptr) {
+			return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };;
+		}
+	}
 
 	D3DXVECTOR3 dir = target->GetPosition() - actor->position;
 	D3DXVec3Normalize(&dir, &dir);

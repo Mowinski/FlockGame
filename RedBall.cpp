@@ -2,7 +2,9 @@
 #include "Game.h"
 #include "CPR_Framework.h"
 #include "RedBallAI.h"
+#include "Utils.h"
 #include <limits>
+#include <sstream>
 
 RedBall::RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 _lookDir) : position{ _position }, lookDir{ _lookDir }, speed{ _lookDir * 25.0f }
 {
@@ -26,9 +28,10 @@ void RedBall::OnUpdate(float deltaTime)
         return;
     }
 
-    D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
+	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
+	truncate(force, Game::GetInstance()->blackboard->maxRedBallForce);
 	float speedValue = D3DXVec3Length(&speed);
-    D3DXVECTOR3 airResistance = - 0.0001f * speedValue * speed;
+    D3DXVECTOR3 airResistance = - 0.01f * speedValue * speed;
 
     speed += (force + airResistance + gravity) / weight * deltaTime;
     D3DXVECTOR3 newPosition{ position + speed * deltaTime };

@@ -1,8 +1,8 @@
-#include <sstream>
-#include <algorithm>
-
 #include "Player.h"
 #include "Game.h"
+
+#include <algorithm>
+#include <sstream>
 
 
 Player::Player()
@@ -54,18 +54,16 @@ D3DXVECTOR3 Player::GetPosition() const
 void Player::Rotate(float deltaTime)
 {
     D3DXVECTOR2 mouseDelta = CalculateMouseDelta();
-    xRotation += -mouseDelta.x * mouseSensitivity * deltaTime;
-    yRotation += mouseDelta.y * mouseSensitivity * deltaTime;
+    xRotation += -mouseDelta.x * Game::GetInstance()->blackboard->mouseSensitivity * deltaTime;
+    yRotation += mouseDelta.y * Game::GetInstance()->blackboard->mouseSensitivity * deltaTime;
+
     if (yRotation > maxYAngle) { yRotation = maxYAngle; }
     if (yRotation < -maxYAngle) { yRotation = -maxYAngle; }
     if (xRotation > 360.0f) { xRotation -= 360.0f; }
     if (xRotation < 0.0f) { xRotation += 360.0f; }
 
-    D3DXMATRIX matRotationX;
-    D3DXMATRIX matRotationY;
-    D3DXMatrixRotationAxis(&matRotationX, &upAxis, D3DXToRadian(xRotation));
-    D3DXMatrixRotationAxis(&matRotationY, &GetLeftVector(lookDir), D3DXToRadian(yRotation));
-    D3DXMATRIX rotation = matRotationX * matRotationY;
+	D3DXMATRIX rotation{};
+	D3DXMatrixRotationYawPitchRoll(&rotation, D3DXToRadian(xRotation), 0, D3DXToRadian(yRotation));
     D3DXVec3TransformCoord(&lookDir, &D3DXVECTOR3{1.0f, 0.0f, 0.0f}, &rotation);
 }
 
@@ -73,10 +71,9 @@ void Player::Move(float deltaTime)
 {
     D3DXVECTOR3 newPosition = CalculatePosition(lookDir, deltaTime);
 
-    bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
-    if (!isCollideWithAnyBuilding) {
-        eyePosition = newPosition;
-        return;
+	if (isMoveAllowed(newPosition)) {
+		eyePosition = newPosition;
+		return; 
     }
 
     const float sweepInterval = 10.0f;
@@ -85,8 +82,7 @@ void Player::Move(float deltaTime)
             D3DXVECTOR3 newLookDir = CalculateYRotateForVector(angle*multiplier);
             newPosition = CalculatePosition(newLookDir, deltaTime);
 
-            bool isCollideWithAnyBuilding = Game::GetInstance()->city->isCollideWithAnyBuilding(newPosition, 8.0f);
-            if (!isCollideWithAnyBuilding) {
+            if (isMoveAllowed(newPosition)) {
                 eyePosition = newPosition;
                 return;
             }
@@ -110,16 +106,16 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
 {
     float speedAhead = 0.0f, speedSide = 0.0f;
     if (IsKeyPressed(Key::KEY_W) || IsKeyPressed(KEY_UP)) {
-        speedSide = moveSensitivity;
+        speedSide = Game::GetInstance()->blackboard->maxMovePlayerSpeed;
     }
     if (IsKeyPressed(Key::KEY_S) || IsKeyPressed(KEY_DOWN)) {
-        speedSide = -moveSensitivity;
+        speedSide = -Game::GetInstance()->blackboard->maxMovePlayerSpeed;
     }
     if (IsKeyPressed(Key::KEY_A) || IsKeyPressed(KEY_LEFT)) {
-        speedAhead = moveSensitivity;
+        speedAhead = Game::GetInstance()->blackboard->maxMovePlayerSpeed;
     }
     if (IsKeyPressed(Key::KEY_D) || IsKeyPressed(KEY_RIGHT)) {
-        speedAhead = -moveSensitivity;
+        speedAhead = -Game::GetInstance()->blackboard->maxMovePlayerSpeed;
     }
 	if (IsKeyPressed(Key::KEY_RETURN)) {
 		DEBUG_PrintEyePosition();
@@ -133,7 +129,7 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
     return D3DXVECTOR2(speedAhead, speedSide);
 }
 
-D3DXVECTOR3 Player::CalculatePosition(D3DXVECTOR3 lookDirection, float deltaTime)
+D3DXVECTOR3 Player::CalculatePosition(const D3DXVECTOR3 &lookDirection, float deltaTime)
 {
     D3DXVECTOR2 speed = CalculateMoveSpeed() * deltaTime;
     D3DXVECTOR3 leftVector = GetLeftVector(lookDirection);
@@ -149,6 +145,26 @@ D3DXVECTOR3 Player::CalculateYRotateForVector(float angle) const
     newLookDir.x = lookDir.x * cos(angle) - lookDir.z * sin(angle);
     newLookDir.z = lookDir.x * sin(angle) + lookDir.z * cos(angle);
     return newLookDir;
+}
+
+bool Player::isOutOfMap(const D3DXVECTOR3 &position) const
+{
+	if (std::fabs(position.x) > 0.49f * Game::GetInstance()->city->getMapWidth()) {
+		return true;
+	}
+
+	if (std::fabs(position.z) > 0.49f * Game::GetInstance()->city->getMapHeight()) {
+		return true;
+	}
+
+	return false;
+}
+
+bool Player::isMoveAllowed(const D3DXVECTOR3 &position) const
+{
+	if (isOutOfMap(position)) return false;
+	if (Game::GetInstance()->city->isCollideWithAnyBuilding(position, 5.0f)) return false;
+	return true;
 }
 
 D3DXVECTOR3 Player::GetLeftVector(const D3DXVECTOR3 &lookDirection) const

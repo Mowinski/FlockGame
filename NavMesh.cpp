@@ -1,7 +1,7 @@
 #include "NavMesh.h"
 #include "Game.h"
 
-NavMesh::NavMesh(int _levelSizeX, int _levelSizeZ) : levelSizeX{_levelSizeX}, levelSizeZ(_levelSizeZ)
+NavMesh::NavMesh(float _levelSizeX, float _levelSizeZ) : levelSizeX{_levelSizeX}, levelSizeZ(_levelSizeZ)
 {
 }
 

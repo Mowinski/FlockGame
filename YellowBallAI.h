@@ -39,6 +39,7 @@ protected:
 
     float desiredHeight{ 2.0f };
     float timeSinceLastChangedHeight{ 0.0f };
+	float pathLength{ 0.0f };
 	
 	YellowBallState state{ YellowBallState::IDLE };
 	std::shared_ptr<NavMesh> navMesh{ Game::GetInstance()->navMesh };
@@ -50,7 +51,7 @@ protected:
     YellowBallVectorType followers;
 
     std::uniform_real_distribution<float> heightDist{ 1.0f, 10.0f };
-	std::uniform_int_distribution<int> escapeLength{ 2, 8 };
+	std::uniform_int_distribution<int> escapeLength{ 3, 8 };
 
     D3DXVECTOR3 getFlockSlotPosition();
 

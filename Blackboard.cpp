@@ -13,10 +13,6 @@ Blackboard::Blackboard( std::shared_ptr<NavMesh> _navMesh) : navMesh(_navMesh)
 }
 
 
-Blackboard::~Blackboard()
-{
-}
-
 std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem()
 {
     return navMesh->getRandom();
@@ -160,6 +156,10 @@ void Blackboard::destroyYellowBall(std::shared_ptr<YellowBall> ball)
     }
 
     std::for_each(redBalls.begin(), redBalls.end(), [&ball](std::shared_ptr<RedBall> item) { if (item->getCurrentTarget() == ball) item->unsetTarget(); });
+
+	if (yellowBalls.size() == 0) {
+		Game::GetInstance()->timer->freezeRoundTime();
+	}
 }
 
 void Blackboard::createNewYellowBall(const D3DXVECTOR3 & position)

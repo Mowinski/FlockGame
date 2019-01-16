@@ -140,7 +140,7 @@ void Game::Loading()
     if (!PrepareInitialYellowBalls()) { return; }
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
-    timer = std::make_shared<Timer>();
+    timer = std::make_unique<Timer>();
     loadingScreen->state = LoadingState::GAME_IS_READY;
     std::this_thread::sleep_for(std::chrono::seconds(2));
     isLoading = false;

@@ -79,7 +79,21 @@ D3DXVECTOR3 YellowBallAI::ScaredUpdate(float deltaTime)
 
 	D3DXVECTOR3 desiredPosition = path[0]->GetPosition();
 	desiredPosition.y = desiredHeight;
-	return GetSteering(desiredPosition, Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed);
+
+	float speed = Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed;
+	if (path.size() == 3) {
+		float diffSpeed = Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed - Game::GetInstance()->blackboard->maxYellowBallSpeed;
+		speed = Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed - 0.3f * diffSpeed;
+	}
+	else if (path.size() == 2) {
+		float diffSpeed = Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed - Game::GetInstance()->blackboard->maxYellowBallSpeed;
+		speed = Game::GetInstance()->blackboard->scaredMaxYellowBallSpeed - 0.6f * diffSpeed;
+	}
+	else if (path.size() == 1) {
+		speed = Game::GetInstance()->blackboard->maxYellowBallSpeed;
+	}
+
+	return GetSteering(desiredPosition, speed);
 }
 
 float YellowBallAI::GetRandomHeight() const
@@ -125,7 +139,6 @@ D3DXVECTOR3 YellowBallAI::getFlockSlotPosition()
 		return targetLeader->GetPosition() + leftDir * 0.4f - targetLeader->speed * 0.4f;
 	}
 
-	// Otherwise follow leader
 	return targetLeader->GetPosition();
 }
 

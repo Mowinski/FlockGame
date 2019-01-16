@@ -1,7 +1,6 @@
 #include "Utils.h"
-#include "Game.h"
 #include "EngineTypes.h"
-
+#include "Game.h"
 #include <algorithm>
 
 std::shared_ptr<NavMeshItem> getNearestNavMeshItem(const D3DXVECTOR3 & position)
@@ -17,4 +16,18 @@ std::shared_ptr<NavMeshItem> getNearestNavMeshItem(const D3DXVECTOR3 & position)
 
 	return *navMeshItemIt;
 
+}
+
+float lerp(float start, float end, float percent)
+{
+	return (start + percent * (end - start));
+}
+
+void truncate(D3DXVECTOR3 & vector, float maxLength)
+{
+	float length = D3DXVec3Length(&vector);
+	if (length > maxLength) {
+		D3DXVec3Normalize(&vector, &vector);
+		vector *= maxLength;
+	}
 }

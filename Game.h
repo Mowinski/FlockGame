@@ -29,6 +29,7 @@ public:
     std::shared_ptr<Loader> loader;
     std::shared_ptr<NavMesh> navMesh;
     std::unique_ptr<Blackboard> blackboard;
+	std::unique_ptr<Timer> timer{ nullptr };
 
 private:
     Game();
@@ -45,7 +46,6 @@ private:
     std::string levelFilename;
     std::shared_ptr<Player> player{ nullptr };
     std::shared_ptr<GameHUD> hud{ nullptr };
-    std::shared_ptr<Timer> timer{ nullptr };
     std::shared_ptr<LevelGround> levelGround{ nullptr };
     std::shared_ptr<LoadingScreen> loadingScreen{ nullptr };
     std::thread* loadingThread;

@@ -1,15 +1,5 @@
 #include "Timer.h"
 
-
-Timer::Timer()
-{
-}
-
-
-Timer::~Timer()
-{
-}
-
 void Timer::updateTime(float deltaTime)
 {
     timeSinceLastRender += deltaTime;
@@ -21,6 +11,12 @@ float Timer::getDeltaTime() const
     return timeSinceLastRender;
 }
 
+float Timer::getRoundTime() const
+{
+	if (roundIsFreezed) { return roundTime; }
+	return totalGameTime;
+}
+
 bool Timer::canStartNextFrame() const
 {
     return timeSinceLastRender >= minTimeToNextFrame;
@@ -29,4 +25,10 @@ bool Timer::canStartNextFrame() const
 void Timer::clearTimeSinceLastRender()
 {
     timeSinceLastRender = 0.0f;
+}
+
+void Timer::freezeRoundTime()
+{
+	roundTime = totalGameTime;
+	roundIsFreezed = true;
 }
