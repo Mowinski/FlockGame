@@ -2,6 +2,7 @@
 #include <d3dx9.h>
 #include <vector>
 #include <memory>
+#include <array>
 
 #include "Renderable.h"
 #include "CPR_Framework.h"
@@ -39,7 +40,7 @@ protected:
     const float weight = 0.1f;
     const float ballSize = 0.2f;
 
-	YellowBall* slotAquired[4] = { nullptr, nullptr, nullptr, nullptr };
+	std::array<YellowBall*, 4> slotAquired{ nullptr, nullptr, nullptr, nullptr };
 
     const D3DXVECTOR3 scale;
     const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };

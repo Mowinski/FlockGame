@@ -14,13 +14,18 @@ D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 {
     D3DXVECTOR3 force{ 0.0f, 0.0f, 0.0f };
 
+	if (isDangerDetected()) {
+		state = YellowBallState::SCARED;
+		SelectNewGoal();
+	}
+
     if (state == YellowBallState::IDLE) {
 		force = IdleUpdate(deltaTime);
     }
 
     if (state == YellowBallState::MOVE_TO) {
         if (timeSinceLastChangedHeight > 10.0f) {
-			desiredHeight = 2.0f; // GetRandomHeight();
+			desiredHeight = GetRandomHeight();
             timeSinceLastChangedHeight = 0.0f;
         }
         timeSinceLastChangedHeight += deltaTime;
@@ -35,13 +40,16 @@ D3DXVECTOR3 YellowBallAI::OnUpdate(float deltaTime)
 		force = FollowShortDistanceUpdate(deltaTime);
     }
 
+	if (state == YellowBallState::SCARED) {
+		force = ScaredUpdate(deltaTime);
+	}
+
     return force;
 }
 
 D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
 {
 	
-    D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     D3DXVECTOR3 diff = getFlockSlotPosition(); - actor->GetPosition();
     desiredHeight = targetLeader->GetPosition().y;
 
@@ -50,11 +58,28 @@ D3DXVECTOR3 YellowBallAI::FollowShortDistanceUpdate(float deltaTime)
         state = YellowBallState::FOLLOW_LONG_DISTANCE;
         path.clear();
     }
-    D3DXVec3Normalize(&speed, &diff);
-    speed.y = 0.0f;
 
 	D3DXVECTOR3 desiredPosition = getFlockSlotPosition();
 	return GetSteering(desiredPosition, Game::GetInstance()->blackboard->maxYellowBallSpeed);
+}
+
+D3DXVECTOR3 YellowBallAI::ScaredUpdate(float deltaTime)
+{
+	D3DXVECTOR3 diff = path[0]->GetPosition() - actor->GetPosition();
+	float distance = diff.x*diff.x + diff.z*diff.z;
+
+	if (distance < 0.1f && path.size() > 0) {
+		path.erase(path.begin());
+	}
+
+	if (path.size() == 0) {
+		state = YellowBallState::IDLE;
+		return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };
+	}
+
+	D3DXVECTOR3 desiredPosition = path[0]->GetPosition();
+	desiredPosition.y = desiredHeight;
+	return GetSteering(desiredPosition, Game::GetInstance()->blackboard->maxYellowBallSpeed * 20.0f);
 }
 
 float YellowBallAI::GetRandomHeight() const
@@ -72,21 +97,32 @@ D3DXVECTOR3 YellowBallAI::GetSteering(const D3DXVECTOR3 & position, float maxSpe
 	return desired_velocity - actor->speed;
 }
 
+bool YellowBallAI::isDangerDetected() const
+{
+	for (auto ball : Game::GetInstance()->blackboard->redBalls) {
+		float distance{ D3DXVec3Length(&(ball->GetPosition() - actor->GetPosition())) };
+		if (distance < Game::GetInstance()->blackboard->dangerousRadius) {
+			return true;
+		}
+	}
+	return false;
+}
+
 D3DXVECTOR3 YellowBallAI::getFlockSlotPosition()
 {
 	D3DXVECTOR3 leftDir;
 	D3DXVec3Cross(&leftDir, &(targetLeader->speed), &(targetLeader->upDir));
 	if (targetLeader->aquireSlot(0, actor)) {
-		return targetLeader->GetPosition() - leftDir*0.2 - targetLeader->speed*0.2;
+		return targetLeader->GetPosition() - leftDir * 0.2f - targetLeader->speed * 0.2f;
 	}
 	else if (targetLeader->aquireSlot(1, actor)) {
-		return targetLeader->GetPosition() + leftDir * 0.2 - targetLeader->speed*0.2;
+		return targetLeader->GetPosition() + leftDir * 0.2f - targetLeader->speed * 0.2f;
 	}
 	else if (targetLeader->aquireSlot(2, actor)) {
-		return targetLeader->GetPosition() - leftDir * 0.4 - targetLeader->speed*0.4;
+		return targetLeader->GetPosition() - leftDir * 0.4f - targetLeader->speed * 0.4f;
 	}
 	else if (targetLeader->aquireSlot(3, actor)) {
-		return targetLeader->GetPosition() + leftDir * 0.4 - targetLeader->speed*0.4;
+		return targetLeader->GetPosition() + leftDir * 0.4f - targetLeader->speed * 0.4f;
 	}
 
 	// Otherwise follow leader
@@ -95,7 +131,6 @@ D3DXVECTOR3 YellowBallAI::getFlockSlotPosition()
 
 D3DXVECTOR3 YellowBallAI::FollowLongDistanceUpdate(float deltaTime)
 {
-    D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
     if (path.size() == 0) {
         path = Game::GetInstance()->blackboard->getPath(actor->GetCurrentNavMeshItem(), targetLeader->GetCurrentNavMeshItem());
     }

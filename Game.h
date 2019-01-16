@@ -41,7 +41,6 @@ private:
 
     static Game* game;
 
-    int ballsCount{ 35 };
     bool isLoading{ true };
     std::string levelFilename;
     std::shared_ptr<Player> player{ nullptr };

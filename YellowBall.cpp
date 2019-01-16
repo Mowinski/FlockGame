@@ -83,6 +83,7 @@ void YellowBall::SetLeader()
 void YellowBall::UnsetLeader()
 {
     isLeader = false;
+	slotAquired.fill(nullptr);
     color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
 }
 
@@ -97,16 +98,12 @@ void YellowBall::UnsetTargetLeader()
 	ai->state = YellowBallState::IDLE;
 }
 
-#include <sstream>
 bool YellowBall::aquireSlot(int index, YellowBall* ball)
 {
 	if (slotAquired[index] == ball) {
 		return true;
 	}
 	if (slotAquired[index] == nullptr) {
-		std::ostringstream oss{};
-		oss << "Alokuje slot numer " << index;
-		OutputDebugString(oss.str().c_str());
 		slotAquired[index] = ball;
 		return true;
 	}

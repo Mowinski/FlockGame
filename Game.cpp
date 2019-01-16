@@ -63,7 +63,6 @@ void Game::Render()
     hud->OnRender();
     levelGround->OnRender();
     city->OnRender();
-    //navMesh->OnRender();
     for (auto ball : blackboard->yellowBalls) {
         ball->OnRender();
     }
@@ -99,7 +98,7 @@ bool Game::PrepareNavMesh()
 
 bool Game::PrepareInitialYellowBalls()
 {
-    for (int i = 0; i < ballsCount; i++) {
+    for (int i = 0; i < blackboard->startingBallsCount; i++) {
         auto ball = std::make_shared<YellowBall>(navMesh->getRandom());
         if (!ball->OnInit()) { return false; }
         blackboard->yellowBalls.push_back(ball);
