@@ -13,10 +13,9 @@ public:
     City(std::string _filename);
     ~City() = default;
 
-    bool OnInit();
-    void OnUpdate(float deltaTime) override;
-    void OnRender() override;
-    D3DXVECTOR3 GetPosition() const override;
+    bool onInit();
+    void onUpdate(float deltaTime) override;
+    void onRender() override;
 
     BuildingVector getBuildingListNear(const D3DXVECTOR3& point, float range) const;
     bool isCollideWithAnyBuilding(const std::shared_ptr<NavMeshItem>& item, float range) const;

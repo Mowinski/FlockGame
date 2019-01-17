@@ -5,18 +5,12 @@
 
 class GameHUD : public Renderable {
 public:
-    GameHUD();
+    GameHUD() = default;
     ~GameHUD();
 
-    void OnRender();
-	void DrawTimer();
-	void DrawBirdCounter();
-	void DrawAmmoIndicator();
-	void DrawCrosshair();
-    void OnUpdate(float deltaTime);
-    bool OnInit();
-    D3DXVECTOR3 GetPosition() const override;
-
+	bool onInit() override;
+	void onUpdate(float deltaTime) override;
+    void onRender() override;
 
 protected:
     D3DXVECTOR2 crosshairPlace;
@@ -26,7 +20,9 @@ protected:
 	ID3DXFont *font{ nullptr };
 	const D3DCOLOR Red = D3DCOLOR_XRGB(255, 0, 0);
 
-
+	void DrawTimer();
+	void DrawBirdCounter();
+	void DrawAmmoIndicator();
+	void DrawCrosshair();
     void DrawRect(int x, int y, int w, int h, D3DCOLOR color) const;
 };
-

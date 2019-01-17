@@ -12,11 +12,11 @@ public:
     RedBall(const D3DXVECTOR3& _position, const D3DXVECTOR3& _lookDir);
     ~RedBall() = default;
 
-    void OnRender() override;
-    void OnUpdate(float deltaTime) override;
-    bool OnInit() override;
+    void onRender() override;
+    void onUpdate(float deltaTime) override;
+    bool onInit() override;
 
-	D3DXVECTOR3 GetPosition() const override { return position; };
+	D3DXVECTOR3 getPosition() const { return position; };
 	bool isDead() const { return position.y <= groundLevel; };
 
 protected:

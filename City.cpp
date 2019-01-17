@@ -9,7 +9,7 @@ City::City(std::string _filename) : filename(_filename)
 {
 }
 
-bool City::OnInit()
+bool City::onInit()
 {
     if (!LoadCityFile()) { return false; }
 
@@ -25,7 +25,7 @@ bool City::OnInit()
         for(auto it = row.begin(); it != row.end(); ++it, x += spaceBetweenBuilding + buildingSize) {
             if (*it < 1.0f) { continue; } // @TODO Remove it!
             std::shared_ptr<Building> building = std::make_shared<Building>(D3DXVECTOR3{ x, 0.0f, z }, *it);
-            if (!building->OnInit()) { return false; }
+            if (!building->onInit()) { return false; }
             buildings.push_back(building);
         }
         z += spaceBetweenBuilding + buildingSize;
@@ -34,20 +34,15 @@ bool City::OnInit()
     return true;
 }
 
-void City::OnUpdate(float deltaTime)
+void City::onUpdate(float deltaTime)
 {
 }
 
-void City::OnRender()
+void City::onRender()
 {
     for (auto building : buildings) {
-        building->OnRender();
+        building->onRender();
     }
-}
-
-D3DXVECTOR3 City::GetPosition() const
-{
-    return D3DXVECTOR3();
 }
 
 BuildingVector City::getBuildingListNear(const D3DXVECTOR3& point, float range) const

@@ -11,17 +11,17 @@ RedBall::RedBall(const D3DXVECTOR3& _position, const D3DXVECTOR3& _lookDir) : po
     ai = std::make_shared<RedBallAI>(this);
 }
 
-void RedBall::OnRender()
+void RedBall::onRender()
 {
     Render(Game::getInstance()->loader->GetMesh("unitsphere"), position, rotation, scale, color);
 }
 
-bool RedBall::OnInit()
+bool RedBall::onInit()
 {
 	return ai != nullptr;
 }
 
-void RedBall::OnUpdate(float deltaTime)
+void RedBall::onUpdate(float deltaTime)
 {
     if (isDead()) {
         position.y = groundLevel;
@@ -44,7 +44,7 @@ void RedBall::checkHitWithYellowBall() const
 {
     std::shared_ptr<YellowBall> nearestBall = Game::getInstance()->blackboard->getNearestBall(position);
     if (nearestBall != nullptr) {
-        float distance = D3DXVec3Length(&(nearestBall->GetPosition() - position));
+        float distance = D3DXVec3Length(&(nearestBall->getPosition() - position));
         if (distance <= ballDiameter) {
             Game::getInstance()->blackboard->cleanUpAfterHit(nearestBall);
 			ai->unsetTarget();

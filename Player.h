@@ -1,48 +1,39 @@
 #pragma once
 #include "RedBall.h"
-#include "Renderable.h"
-#include <d3dx9.h>
+#include <d3dx9math.h>
 
-class Player : public Renderable {
+class Player {
 public:
-    Player();
+	Player() = default;
     Player(D3DXVECTOR3 _eyePosition, D3DXVECTOR3 _lookDir);
-	~Player();
+	~Player() = default;
 
-    void OnUpdate(float deltaTime) override;
-    void OnRender() override;
-    bool OnInit() override;
-    D3DXVECTOR3 GetPosition() const override;
+    void onUpdate(float deltaTime);
+    void onInit();
 
 protected:
     const float eyeHeightPosition = 0.9f;
-
     D3DXVECTOR3 eyePosition{ 0.0f, eyeHeightPosition, 0.0f };
     D3DXVECTOR3 lookDir{ 1.0f, 0.0f, 0.0f };
-
-    
-
     const D3DXVECTOR3 upAxis{ 0.0f, 1.0f, 0.0f };
+
     const float maxYAngle{ 55.0f };
-    D3DXVECTOR2 mouseCenter{ 100.0f, 200.0f };
+	D3DXVECTOR2 mouseCenter;
     float xRotation{ 0.0f };
     float yRotation{ 0.0f };
 
     const float reloadTime{ 3.0f };
     float lastShootTime{ 0.0f };
 
-    void Rotate(float deltaTime);
-    void Move(float deltaTime);
+    void rotate(float deltaTime);
+    void move(float deltaTime);
 
-    inline D3DXVECTOR3 GetLeftVector(const D3DXVECTOR3 &lookDirection) const;
-    inline void CenterCursor() const;
-    inline D3DXVECTOR2 CalculateMouseDelta() const;
-    inline D3DXVECTOR2 CalculateMoveSpeed();
-    D3DXVECTOR3 CalculatePosition(const D3DXVECTOR3& lookDirection, float deltaTime);
-    D3DXVECTOR3 CalculateYRotateForVector(float angle) const;
+    D3DXVECTOR3 getLeftVector(const D3DXVECTOR3 &lookDirection) const;
+    inline void centerCursor() const;
+    inline D3DXVECTOR2 calculateMouseDelta() const;
+    inline D3DXVECTOR2 calculateMoveSpeed() const;
+    D3DXVECTOR3 calculatePosition(const D3DXVECTOR3& lookDirection, float deltaTime) const;
+    D3DXVECTOR3 calculateYRotateForVector(float angle) const;
 	bool isOutOfMap(const D3DXVECTOR3& position) const;
 	bool isMoveAllowed(const D3DXVECTOR3& position) const;
-    void DEBUG_PrintEyePosition() const;
-    void DEBUG_PrintLookDir() const;
-    void DEBUG_PrintRotator() const;
 };

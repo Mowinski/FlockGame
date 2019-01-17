@@ -1,12 +1,6 @@
 #include "LoadingScreen.h"
 #include "Game.h"
 
-
-LoadingScreen::LoadingScreen()
-{
-}
-
-
 LoadingScreen::~LoadingScreen()
 {
     if (font != nullptr) {
@@ -15,18 +9,18 @@ LoadingScreen::~LoadingScreen()
     }
 }
 
-void LoadingScreen::OnRender()
+void LoadingScreen::onRender()
 {
     std::string str = "Loading...\n" + task;
-    RECT font_rect;
 
-    SetRect(&font_rect, 0, 0, width, height);
+    RECT font_rect;
+    SetRect(&font_rect, 0, 0, screenWidth, screenHeight);
 
     Game::getInstance()->graphicDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 0, 0);
     font->DrawText(NULL, str.c_str(), -1, &font_rect, DT_CENTER | DT_VCENTER | DT_NOCLIP, D3DCOLOR_RGBA(255, 255, 255, 255));
 }
 
-void LoadingScreen::OnUpdate(float deltaTime)
+void LoadingScreen::onUpdate(float deltaTime)
 {
     switch (state) {
     case INIT:
@@ -58,15 +52,16 @@ void LoadingScreen::OnUpdate(float deltaTime)
         break;
     default:
         task = "Unknown!";
+		break;
     }
 }
 
-bool LoadingScreen::OnInit()
+bool LoadingScreen::onInit()
 {
     D3DVIEWPORT9 viewport;
     Game::getInstance()->graphicDevice->GetViewport(&viewport);
-    width = viewport.Width;
-    height = viewport.Height;
+    screenWidth = viewport.Width;
+    screenHeight = viewport.Height;
 
     HRESULT hr = D3DXCreateFont(Game::getInstance()->graphicDevice,
                                 46,
@@ -81,9 +76,4 @@ bool LoadingScreen::OnInit()
                                 "Impact",
                                 &font);
     return SUCCEEDED(hr);
-}
-
-D3DXVECTOR3 LoadingScreen::GetPosition() const
-{
-    return D3DXVECTOR3();
 }

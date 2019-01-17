@@ -24,7 +24,7 @@ std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3 &positi
     std::shared_ptr<YellowBall> ret{ nullptr };
     float minLength = (std::numeric_limits<float>::max)();
     for (auto ball : yellowBalls) {
-        float diff = D3DXVec3Length(&(ball->GetPosition() - position));
+        float diff = D3DXVec3Length(&(ball->getPosition() - position));
         if (diff < minLength) {
             minLength = diff;
             ret = ball;
@@ -100,7 +100,7 @@ void Blackboard::nominateLeaders()
 	const size_t ballsCount = yellowBalls.size();
 	const short unsigned int leadersCount = static_cast<short unsigned int>(std::ceil(ballsCount / 5.0f));
     std::random_shuffle(yellowBalls.begin(), yellowBalls.end());
-	std::for_each(yellowBalls.begin(), yellowBalls.begin() + leadersCount, [this](auto ball) { ball->SetLeader(); yellowBallsLeaders.push_back(ball); });
+	std::for_each(yellowBalls.begin(), yellowBalls.begin() + leadersCount, [this](auto ball) { ball->setLeader(); yellowBallsLeaders.push_back(ball); });
 }
 
 void Blackboard::cleanUpAfterHit(const std::shared_ptr<YellowBall> &ball)
@@ -118,14 +118,14 @@ void Blackboard::clearDeadRedBalls()
 	auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return item->isDead(); });
 
 	if (redBallIt != redBalls.end()) {
-		createNewYellowBall((*redBallIt)->GetPosition());
+		createNewYellowBall((*redBallIt)->getPosition());
 		redBalls.erase(redBallIt);
 	}
 }
 
 void Blackboard::clearLeaders()
 {
-	std::for_each(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), [](auto ball) { ball->UnsetLeader(); });
+	std::for_each(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), [](auto ball) { ball->unsetLeader(); });
 	yellowBallsLeaders.clear();
 }
 
@@ -149,7 +149,7 @@ void Blackboard::unsetTargetLeader(const std::shared_ptr<YellowBall> &ball)
 {
 	for (auto b : yellowBalls) {
 		if (b->checkTargetLeader(ball)) {
-			b->UnsetTargetLeader();
+			b->unsetTargetLeader();
 		}
 	}
 }

@@ -16,19 +16,20 @@ enum LoadingState {
 
 class LoadingScreen : public Renderable {
 public:
-    LoadingScreen();
+    LoadingScreen() = default;
     ~LoadingScreen();
 
-    void OnRender() override;
-    void OnUpdate(float deltaTime) override;
-    bool OnInit() override;
-    D3DXVECTOR3 GetPosition() const override;
+    void onRender() override;
+    void onUpdate(float deltaTime) override;
+    bool onInit() override;
 
     LoadingState state{ INIT };
 protected:
-    ID3DXFont *font{ nullptr };
-    int width;
-    int height;
+    int screenWidth;
+    int screenHeight;
     std::string task{ "" };
+
+	ID3DXFont *font{ nullptr };
+
 };
 

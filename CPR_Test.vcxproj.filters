@@ -5,9 +5,6 @@
     <ClCompile Include="LevelGround.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
-    <ClCompile Include="Renderable.cpp">
-      <Filter>Renderable</Filter>
-    </ClCompile>
     <ClCompile Include="Building.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>

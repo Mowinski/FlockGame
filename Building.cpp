@@ -21,16 +21,16 @@ Building::Building(const D3DXVECTOR3& _position, int _height) :
 {
 }
 
-void Building::OnUpdate(float deltaTime)
+void Building::onUpdate(float deltaTime)
 {
 }
 
-void Building::OnRender()
+void Building::onRender()
 {
     Render(Game::getInstance()->loader->GetMesh("unitbox"), position, rotation, scale, color);
 }
 
-bool Building::OnInit()
+bool Building::onInit()
 {
 	const float halfSize = buildingSize / 2.0f;
 	const float halfHeight = height / 2.0f;
@@ -62,11 +62,6 @@ bool Building::isCollide(const D3DXVECTOR3& point) const
 bool Building::isCollide(const AABBCollisionBox& box) const
 {
     return collisionBox.isCollide(box);
-}
-
-D3DXVECTOR3 Building::GetPosition() const
-{
-    return position;
 }
 
 D3DXVECTOR3 Building::getNormalAtPoint(const D3DXVECTOR3 & point) const

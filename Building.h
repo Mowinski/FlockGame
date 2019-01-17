@@ -8,13 +8,12 @@ public:
     Building(const D3DXVECTOR3& _position, int _height);
     ~Building() = default;
 
-    void OnUpdate(float deltaTime) override;
-    void OnRender() override;
-    bool OnInit() override;
+    void onUpdate(float deltaTime) override;
+    void onRender() override;
+    bool onInit() override;
     float getDistanceBetweenCenterAndPoint(const D3DXVECTOR3& point);
     bool isCollide(const D3DXVECTOR3& point) const;
     bool isCollide(const AABBCollisionBox & box) const;
-    D3DXVECTOR3 GetPosition() const override;
 	D3DXVECTOR3 getNormalAtPoint(const D3DXVECTOR3& point) const;
 
 protected:

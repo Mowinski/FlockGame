@@ -1,64 +1,48 @@
 #include "YellowBall.h"
-#include "YellowBallAI.h"
+
+#include "CPR_Framework.h"
 #include "Game.h"
-#include "Utils.h"
+#include "YellowBallAI.h"
 
-
-YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item) : scale{ ballSize, ballSize, ballSize }
+YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item)
 {
     position = item->GetPosition();
     position.y = 2.0f;
-    ai = std::make_shared<YellowBallAI>(this, item);
+    ai = std::make_shared<YellowBallAI>(this);
 }
 
-YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item, float height) : scale{ ballSize, ballSize, ballSize }
+YellowBall::YellowBall(std::shared_ptr<NavMeshItem> item, float height)
 {
     position = item->GetPosition();
     position.y = height;
-    ai = std::make_shared<YellowBallAI>(this, item);
+    ai = std::make_shared<YellowBallAI>(this);
 }
 
-
-YellowBall::~YellowBall()
-{
-}
-
-void YellowBall::OnRender()
+void YellowBall::onRender()
 {
     Render(Game::getInstance()->loader->GetMesh("unitsphere"), position, rotation, scale, color);
 }
 
-void YellowBall::OnUpdate(float deltaTime)
+void YellowBall::onUpdate(float deltaTime)
 {
 	D3DXVECTOR3 force = ai->onUpdate(deltaTime);
 	speed += force / weight * deltaTime;
 	position += speed * deltaTime;
 }
 
-bool YellowBall::OnInit()
+bool YellowBall::onInit()
 {
     return true;
 }
 
-D3DXVECTOR3 YellowBall::GetPosition() const
-{
-    return position;
-}
-
-D3DXVECTOR3 YellowBall::GetSpeed() const
-{
-    return speed;
-}
-
-std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
+std::shared_ptr<YellowBall> YellowBall::getNearestLeaderIfAny() const
 {
     std::shared_ptr<YellowBall> ret = nullptr;
 
-    if (D3DXVec3Length(&speed) == 0.0f) { return ret; }
     float shortestDistance = visibilityDistance;
 
     for (auto leader : Game::getInstance()->blackboard->yellowBallsLeaders) {
-        D3DXVECTOR3 diffVec = leader->GetPosition() - GetPosition();
+        D3DXVECTOR3 diffVec = leader->getPosition() - getPosition();
         float distance = D3DXVec3Length(&diffVec);
         if (distance < shortestDistance) {
             ret = leader;
@@ -68,29 +52,24 @@ std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
     return ret;
 }
 
-std::shared_ptr<NavMeshItem> YellowBall::GetCurrentNavMeshItem() const
-{
-    return Utils::getNearestNavMeshItem(position);
-}
-
-void YellowBall::SetLeader()
+void YellowBall::setLeader()
 {
     isLeader = true;
     ai->nominateToLeader();
 }
 
-void YellowBall::UnsetLeader()
+void YellowBall::unsetLeader()
 {
     isLeader = false;
 	slotAquired.fill(nullptr);
 }
 
-bool YellowBall::checkTargetLeader(std::shared_ptr<YellowBall> ball) const
+bool YellowBall::checkTargetLeader(const std::shared_ptr<YellowBall>& ball) const
 {
 	return ai->targetLeader == ball;
 }
 
-void YellowBall::UnsetTargetLeader()
+void YellowBall::unsetTargetLeader()
 {
 	ai->targetLeader = nullptr;
 	ai->state = YellowBallState::IDLE;

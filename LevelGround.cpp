@@ -9,16 +9,11 @@ LevelGround::LevelGround(float _mapSizeX, float _mapSizeZ) : mapSizeX(_mapSizeX)
 {
 }
 
-
-LevelGround::~LevelGround()
+void LevelGround::onUpdate(float deltaTime)
 {
 }
 
-void LevelGround::OnUpdate(float deltaTime)
-{
-}
-
-void LevelGround::OnRender()
+void LevelGround::onRender()
 {
     Render(Game::getInstance()->loader->GetMesh("unitbox"), levelGroundPosition, rotation, levelGroundScale, greenColor);
 
@@ -28,7 +23,7 @@ void LevelGround::OnRender()
 	}
 }
 
-bool LevelGround::OnInit()
+bool LevelGround::onInit()
 {
 	levelGroundScale = D3DXVECTOR3{ mapSizeX, 0.10f, mapSizeZ };
 	fencePosition[0] = D3DXVECTOR3{ -0.5f * mapSizeX, 0.0f, 0.0f };
@@ -42,9 +37,4 @@ bool LevelGround::OnInit()
 	fenceScale[3] = D3DXVECTOR3{ mapSizeX, 1.0f, 0.2f };
 
     return true;
-}
-
-D3DXVECTOR3 LevelGround::GetPosition() const
-{
-    return D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }

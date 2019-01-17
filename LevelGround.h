@@ -5,12 +5,11 @@
 class LevelGround : public Renderable {
 public:
     LevelGround(float _mapSizeX, float _mapSizeZ);
-    ~LevelGround();
+    ~LevelGround() = default;
 
-    void OnUpdate(float deltaTime) override;
-    void OnRender() override;
-    bool OnInit() override;
-    D3DXVECTOR3 GetPosition() const override;
+    void onUpdate(float deltaTime) override;
+    void onRender() override;
+    bool onInit() override;
 
 private:
     const float mapSizeX;

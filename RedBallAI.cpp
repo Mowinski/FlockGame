@@ -16,7 +16,7 @@ D3DXVECTOR3 RedBallAI::onUpdate(float deltaTime)
 		}
 	}
 
-	D3DXVECTOR3 desiredDirection = target->GetPosition() - actor->position;
+	D3DXVECTOR3 desiredDirection = target->getPosition() - actor->position;
 	D3DXVec3Normalize(&desiredDirection, &desiredDirection);
 	D3DXVECTOR3 desiredVelocity =  desiredDirection * Game::getInstance()->blackboard->maxRedBallSpeed;
 	D3DXVECTOR3 steering = desiredVelocity - actor->speed;

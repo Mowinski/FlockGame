@@ -26,7 +26,6 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RedBall.cpp" />
     <ClCompile Include="RedBallAI.cpp" />
-    <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="YellowBall.cpp" />

@@ -17,24 +17,21 @@ enum YellowBallState {
 
 class YellowBallAI {
 public:
-    YellowBallAI(YellowBall* _actor, std::shared_ptr<NavMeshItem> item);
+    YellowBallAI(YellowBall* _actor);
     ~YellowBallAI() = default;
 
     D3DXVECTOR3 onUpdate(float deltaTime);
-    void nominateToLeader();
+	void nominateToLeader() { state = YellowBallState::IDLE; };
 
 protected:
     float desiredHeight{ 2.0f };
     float timeSinceLastChangedHeight{ 0.0f };
-	float pathLength{ 0.0f };
 	
 	YellowBallState state{ YellowBallState::IDLE };
-    std::shared_ptr<NavMeshItem> goal;
-    NavMeshItemsVectorType path;
-    YellowBall* actor;
+	NavMeshItemsVectorType path{};
+	YellowBall* actor{ nullptr };
     std::shared_ptr<YellowBall> targetLeader{ nullptr };
     std::shared_ptr<NavMeshItem> targetLeaderNavMesh{ nullptr };
-    YellowBallVectorType followers;
 
     std::uniform_real_distribution<float> heightDist{ 1.0f, 10.0f };
 	std::uniform_int_distribution<unsigned int> escapeLength{ 3, 8 };

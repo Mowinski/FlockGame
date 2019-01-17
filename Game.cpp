@@ -20,7 +20,7 @@ bool Game::init(std::string filename)
     levelFilename = filename;
     if (!retrieveGraphicDevice()) { return false; }
     loadingScreen = std::make_shared<LoadingScreen>();
-    if (!loadingScreen->OnInit()) { return false; }
+    if (!loadingScreen->onInit()) { return false; }
     loader = std::make_shared<Loader>();
 
     loadingThread = new std::thread(&Game::loading, this);
@@ -30,7 +30,7 @@ bool Game::init(std::string filename)
 void Game::update(float deltaTime)
 {
     if (isLoading) {
-        loadingScreen->OnUpdate(deltaTime);
+        loadingScreen->onUpdate(deltaTime);
         return;
     }
     if (loadingThread && loadingThread->joinable()) { loadingThread->join(); }
@@ -39,15 +39,15 @@ void Game::update(float deltaTime)
     if (!timer->canStartNextFrame()) { return; }
     float timeSinceLastFrame = timer->getDeltaTime();
 
-    player->OnUpdate(timeSinceLastFrame);
-    hud->OnUpdate(timeSinceLastFrame);
-    levelGround->OnUpdate(timeSinceLastFrame);
-    city->OnUpdate(timeSinceLastFrame);
+    player->onUpdate(timeSinceLastFrame);
+    hud->onUpdate(timeSinceLastFrame);
+    levelGround->onUpdate(timeSinceLastFrame);
+    city->onUpdate(timeSinceLastFrame);
     for (auto ball : blackboard->yellowBalls) {
-        ball->OnUpdate(timeSinceLastFrame);
+        ball->onUpdate(timeSinceLastFrame);
     }
     for (auto ball : blackboard->redBalls) {
-        ball->OnUpdate(timeSinceLastFrame);
+        ball->onUpdate(timeSinceLastFrame);
     }
     blackboard->clearDeadRedBalls();
     timer->clearTimeSinceLastRender();
@@ -56,18 +56,17 @@ void Game::update(float deltaTime)
 void Game::render()
 {
     if (isLoading) {
-        loadingScreen->OnRender();
+        loadingScreen->onRender();
         return;
     }
-    player->OnRender();
-    hud->OnRender();
-    levelGround->OnRender();
-    city->OnRender();
+    hud->onRender();
+    levelGround->onRender();
+    city->onRender();
     for (auto ball : blackboard->yellowBalls) {
-        ball->OnRender();
+        ball->onRender();
     }
     for (auto ball : blackboard->redBalls) {
-        ball->OnRender();
+        ball->onRender();
     }
 }
 
@@ -83,10 +82,10 @@ bool Game::retrieveGraphicDevice()
 bool Game::prepareLevel(const std::string& filename)
 {
     city = std::make_shared<City>(filename);
-    if (!city->OnInit()) { return false; }
+    if (!city->onInit()) { return false; }
 
     levelGround = std::make_shared<LevelGround>(city->getMapWidth(), city->getMapHeight());
-    if (!levelGround->OnInit()) { return false; }
+    if (!levelGround->onInit()) { return false; }
     return true;
 }
 
@@ -100,7 +99,7 @@ bool Game::prepareInitialYellowBalls()
 {
     for (int i = 0; i < blackboard->startingBallsCount; i++) {
         auto ball = std::make_shared<YellowBall>(navMesh->getRandom());
-        if (!ball->OnInit()) { return false; }
+        if (!ball->onInit()) { return false; }
         blackboard->yellowBalls.push_back(ball);
     }
     blackboard->nominateLeaders();
@@ -117,12 +116,12 @@ void Game::loading()
 
     loadingScreen->state = LoadingState::PLAYER;
     player = std::make_shared<Player>();
-    player->OnInit();
+    player->onInit();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::GAME_HUD;
     hud = std::make_shared<GameHUD>();
-    hud->OnInit();
+    hud->onInit();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PREPARE_LEVEL;

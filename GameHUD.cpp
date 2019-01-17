@@ -2,13 +2,8 @@
 #include "Game.h"
 
 #include <cmath>
-#include <sstream>
 #include <iomanip> 
-
-GameHUD::GameHUD()
-{
-}
-
+#include <sstream>
 
 GameHUD::~GameHUD()
 {
@@ -18,7 +13,43 @@ GameHUD::~GameHUD()
 	}
 }
 
-void GameHUD::OnRender()
+bool GameHUD::onInit()
+{
+	D3DVIEWPORT9 viewport;
+	Game::getInstance()->graphicDevice->GetViewport(&viewport);
+	crosshairPlace.x = static_cast<float>(viewport.Width / 2);
+	crosshairPlace.y = static_cast<float>(viewport.Height / 2);
+
+	ammoPlace.x = viewport.Width - 80.0f;
+	ammoPlace.y = viewport.Height - 60.0f;
+
+	birdCounterPlace.x = 40.0f;
+	birdCounterPlace.y = viewport.Height - 60.0f;
+
+	timerPlace.x = 40.0f;
+	timerPlace.y = 10.0f;
+
+	HRESULT hr = D3DXCreateFont(Game::getInstance()->graphicDevice,
+		34,
+		0,
+		FW_NORMAL,
+		1,
+		false,
+		DEFAULT_CHARSET,
+		OUT_DEFAULT_PRECIS,
+		ANTIALIASED_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE,
+		"Impact",
+		&font);
+
+	return true;
+}
+
+void GameHUD::onUpdate(float deltaTime)
+{
+}
+
+void GameHUD::onRender()
 {
 	DrawCrosshair();
 	DrawAmmoIndicator();
@@ -57,51 +88,8 @@ void GameHUD::DrawCrosshair()
 	DrawRect(static_cast<int>(crosshairPlace.x), static_cast<int>(crosshairPlace.y) - 20, 2, 40, Red);
 }
 
-void GameHUD::OnUpdate(float deltaTime)
-{
-}
-
-bool GameHUD::OnInit()
-{
-    D3DVIEWPORT9 viewport;
-    Game::getInstance()->graphicDevice->GetViewport(&viewport);
-    crosshairPlace.x = static_cast<float>(viewport.Width / 2);
-    crosshairPlace.y = static_cast<float>(viewport.Height / 2);
-
-	ammoPlace.x = viewport.Width - 80.0f;
-	ammoPlace.y = viewport.Height - 60.0f;
-
-	birdCounterPlace.x = 40.0f;
-	birdCounterPlace.y = viewport.Height - 60.0f;
-
-	timerPlace.x = 40.0f;
-	timerPlace.y = 10.0f;
-
-	HRESULT hr = D3DXCreateFont(Game::getInstance()->graphicDevice,
-		34,
-		0,
-		FW_NORMAL,
-		1,
-		false,
-		DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS,
-		ANTIALIASED_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE,
-		"Impact",
-		&font);
-
-    return true;
-}
-
-D3DXVECTOR3 GameHUD::GetPosition() const
-{
-    return D3DXVECTOR3();
-}
-
-
 void GameHUD::DrawRect(int x, int y, int w, int h, D3DCOLOR color) const
 {
     D3DRECT BarRect = { x, y, x + w, y + h };
     Game::getInstance()->graphicDevice->Clear(1, &BarRect, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, color, 0, 0);
 }
-
