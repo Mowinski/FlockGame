@@ -9,8 +9,8 @@ namespace Utils {
 		NavMeshItemsVectorType navMeshItem = Game::GetInstance()->navMesh->navMeshItems;
 
 		auto cmpFn = [&position](std::shared_ptr<NavMeshItem> item1, std::shared_ptr<NavMeshItem> item2) {
-			float d1 = D3DXVec3Length(&(item1->position - position));
-			float d2 = D3DXVec3Length(&(item2->position - position));
+			float d1 = D3DXVec3Length(&(item1->GetPosition() - position));
+			float d2 = D3DXVec3Length(&(item2->GetPosition() - position));
 			return d1 < d2;
 		};
 		auto navMeshItemIt = std::min_element(navMeshItem.begin(), navMeshItem.end(), cmpFn);

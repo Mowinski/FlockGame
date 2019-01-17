@@ -218,7 +218,10 @@ void YellowBallAI::SelectNewGoal()
     static float minimumDistance = (std::min)(Game::GetInstance()->city->getMapHeight(), Game::GetInstance()->city->getMapWidth()) * 0.35f;
 
 	std::shared_ptr<NavMeshItem> currentNavMesh = Utils::getNearestNavMeshItem(actor->position);
-    std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(minimumDistance, currentNavMesh->position.x, currentNavMesh->position.z);
+    std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(
+		minimumDistance,
+		currentNavMesh->GetPosition().x,
+		currentNavMesh->GetPosition().z);
     path = Game::GetInstance()->blackboard->getPath(currentNavMesh, newGoal);
     goal = newGoal;
 }

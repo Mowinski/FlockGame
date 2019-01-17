@@ -11,7 +11,7 @@
 std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance, float x, float z) const
 {
     NavMeshItemsVectorType items{};
-    auto cmpFunc = [&minDistance, &x, &z](std::shared_ptr<NavMeshItem> item) { return item->CalculateDist(x, z) > minDistance; };
+    auto cmpFunc = [&minDistance, &x, &z](std::shared_ptr<NavMeshItem> item) { return item->CalculateDistance(x, z) > minDistance; };
     std::copy_if(Game::GetInstance()->navMesh->navMeshItems.begin(), Game::GetInstance()->navMesh->navMeshItems.end(), std::back_inserter(items), cmpFunc);
 
     auto randIt = items.begin();
@@ -43,7 +43,7 @@ NavMeshItemsVectorType Blackboard::getPath(const std::shared_ptr<NavMeshItem>& s
     std::map<std::shared_ptr<NavMeshItem>, float> gScore;
     std::map<std::shared_ptr<NavMeshItem>, float> fScore;
 
-    auto heuristic = [&end](std::shared_ptr<NavMeshItem> item) -> float { return D3DXVec3Length(&(end->position - item->position)); };
+    auto heuristic = [&end](std::shared_ptr<NavMeshItem> item) -> float { return D3DXVec3Length(&(end->GetPosition() - item->GetPosition())); };
     auto lowestFScore = [&fScore, INF](std::shared_ptr<NavMeshItem> item1, std::shared_ptr<NavMeshItem> item2) -> int {
         float f1 = fScore.find(item1) == fScore.end() ? INF : fScore[item1];
         float f2 = fScore.find(item2) == fScore.end() ? INF : fScore[item2];
@@ -76,7 +76,7 @@ NavMeshItemsVectorType Blackboard::getPath(const std::shared_ptr<NavMeshItem>& s
             if (isInClosedSet) { continue; }
 
             if (gScore.find(current) == gScore.end()) { gScore[current] = INF; }
-            float tentativeScore = gScore[current] + neighbor->CalculateDist(current->position.x, current->position.z);
+            float tentativeScore = gScore[current] + neighbor->CalculateDistance(current->GetPosition().x, current->GetPosition().z);
 
             bool isInOpenSet = std::find(openSet.begin(), openSet.end(), neighbor) != openSet.end();
 

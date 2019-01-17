@@ -75,7 +75,7 @@ bool City::isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const
 
 bool City::isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const
 {
-	BuildingVector buildings = getBuildingListNear(item->position, range);
+	BuildingVector buildings = getBuildingListNear(item->GetPosition(), range);
 	auto collideCmp = [item](std::shared_ptr<Building> b) {return b->isCollide(item->collisionBox); };
 	return std::any_of(buildings.begin(), buildings.end(), collideCmp);
 }

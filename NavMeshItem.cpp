@@ -1,44 +1,15 @@
 #include "NavMeshItem.h"
-#include "Game.h"
 #include  <random>
-#include  <iterator>
 
 
-struct line_vertex {
-    float x, y, z;
-};
-
-
-NavMeshItem::NavMeshItem(int _id, float x, float z) : id(_id), position{ x, 0.0f, z }, collisionBox{ D3DXVECTOR3{x - 0.5f, 0.0f, z - 0.5f}, D3DXVECTOR3{x + 0.5f, 0.0f, z + 0.5f} }
+NavMeshItem::NavMeshItem(int _id, float x, float z) :
+	id(_id),
+	position{ x, 0.0f, z },
+	collisionBox{ D3DXVECTOR3{x - 0.5f, 0.0f, z - 0.5f}, D3DXVECTOR3{x + 0.5f, 0.0f, z + 0.5f} }
 {
 }
 
-
-NavMeshItem::~NavMeshItem()
-{
-}
-
-void NavMeshItem::OnRender()
-{
-    Render(Game::GetInstance()->loader->GetMesh("unitsphere"), position, rotation, scale, color);
-}
-
-void NavMeshItem::OnUpdate(float deltaTime)
-{
-}
-
-bool NavMeshItem::OnInit()
-{
-    D3DXCreateLine(Game::GetInstance()->graphicDevice, &line);
-    return true;
-}
-
-D3DXVECTOR3 NavMeshItem::GetPosition() const
-{
-    return position;
-}
-
-float NavMeshItem::CalculateDist(float x, float z) const
+float NavMeshItem::CalculateDistance(float x, float z) const
 {
     D3DXVECTOR2 diff(position.x - x, position.z - z);
     return D3DXVec2Length(&diff);

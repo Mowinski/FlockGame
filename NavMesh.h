@@ -1,8 +1,7 @@
 #pragma once
-#include "Renderable.h"
 #include "EngineTypes.h"
-#include <d3dx9.h>
-#include <vector>
+
+#include <d3dx9math.h>
 #include <memory>
 
 
@@ -19,10 +18,10 @@ public:
 protected:
     float levelSizeX;
     float levelSizeZ;
+	const float maxDistanceBetweenNeighbors{ 1.5f };
 
 	NavMeshItemsVectorType findNeighbors(int id, float x, float z) const;
 	void generateNavMeshItem(int id, const D3DXVECTOR3& position) ;
 	void generateConnectionBetweenNavMeshItem();
 	void generateNavMeshItems();
 };
-

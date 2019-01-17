@@ -11,11 +11,36 @@ void NavMesh::onInit()
 	generateConnectionBetweenNavMeshItem();
 }
 
+std::shared_ptr<NavMeshItem> NavMesh::getRandom() const
+{
+    auto randIt = navMeshItems.begin();
+    std::advance(randIt, std::rand() % navMeshItems.size());
+    return *randIt;
+}
+
+NavMeshItemsVectorType NavMesh::findNeighbors(int id, float x, float z) const
+{
+    NavMeshItemsVectorType items{};
+    for (auto item : navMeshItems) {
+        if (item->id == id) { continue; }
+        D3DXVECTOR2 distanceVec{ item->GetPosition().x - x, item->GetPosition().z - z };
+        if (D3DXVec2Length(&distanceVec) < maxDistanceBetweenNeighbors) { items.push_back(item); }
+    }
+
+    return items;
+}
+
+void NavMesh::generateNavMeshItem(int id, const D3DXVECTOR3& position)
+{
+	auto item = std::make_shared<NavMeshItem>(id, position.x, position.z);
+	navMeshItems.push_back(item);
+}
+
 void NavMesh::generateConnectionBetweenNavMeshItem()
 {
 
 	for (auto navMeshItem : navMeshItems) {
-		NavMeshItemsVectorType neighbors = findNeighbors(navMeshItem->id, navMeshItem->position.x, navMeshItem->position.z);
+		NavMeshItemsVectorType neighbors = findNeighbors(navMeshItem->id, navMeshItem->GetPosition().x, navMeshItem->GetPosition().z);
 		navMeshItem->AddNeighbors(neighbors);
 	}
 }
@@ -34,31 +59,3 @@ void NavMesh::generateNavMeshItems()
 		}
 	}
 }
-
-std::shared_ptr<NavMeshItem> NavMesh::getRandom() const
-{
-    auto randIt = navMeshItems.begin();
-    std::advance(randIt, std::rand() % navMeshItems.size());
-    return *randIt;
-}
-
-NavMeshItemsVectorType NavMesh::findNeighbors(int id, float x, float z) const
-{
-    NavMeshItemsVectorType items{};
-    for (auto item : navMeshItems) {
-        if (item->id == id) { continue; }
-        D3DXVECTOR2 distanceVec{ item->position.x - x, item->position.z - z };
-        if (D3DXVec2Length(&distanceVec) < 1.5) { items.push_back(item); }
-    }
-
-    return items;
-}
-
-void NavMesh::generateNavMeshItem(int id, const D3DXVECTOR3& position)
-{
-	auto item = std::make_shared<NavMeshItem>(id, position.x, position.z);
-	item->OnInit();
-	navMeshItems.push_back(item);
-}
-
-
