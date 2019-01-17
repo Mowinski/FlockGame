@@ -12,7 +12,7 @@ std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance,
 {
     NavMeshItemsVectorType items{};
     auto cmpFunc = [&minDistance, &x, &z](std::shared_ptr<NavMeshItem> item) { return item->CalculateDistance(x, z) > minDistance; };
-    std::copy_if(Game::GetInstance()->navMesh->navMeshItems.begin(), Game::GetInstance()->navMesh->navMeshItems.end(), std::back_inserter(items), cmpFunc);
+    std::copy_if(Game::getInstance()->navMesh->navMeshItems.begin(), Game::getInstance()->navMesh->navMeshItems.end(), std::back_inserter(items), cmpFunc);
 
     auto randIt = items.begin();
     std::advance(randIt, std::rand() % items.size());
@@ -115,7 +115,7 @@ void Blackboard::cleanUpAfterHit(const std::shared_ptr<YellowBall> &ball)
 
 void Blackboard::clearDeadRedBalls()
 {
-	auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return !item->isDead(); });
+	auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return item->isDead(); });
 
 	if (redBallIt != redBalls.end()) {
 		createNewYellowBall((*redBallIt)->GetPosition());
@@ -165,6 +165,6 @@ void Blackboard::destroyYellowBall(const std::shared_ptr<YellowBall> & ball)
 void Blackboard::checkWiningCondition()
 {
 	if (yellowBalls.size() == 0) {
-		Game::GetInstance()->timer->freezeRoundTime();
+		Game::getInstance()->timer->freezeRoundTime();
 	}
 }

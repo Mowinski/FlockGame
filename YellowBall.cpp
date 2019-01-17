@@ -25,12 +25,12 @@ YellowBall::~YellowBall()
 
 void YellowBall::OnRender()
 {
-    Render(Game::GetInstance()->loader->GetMesh("unitsphere"), position, rotation, scale, color);
+    Render(Game::getInstance()->loader->GetMesh("unitsphere"), position, rotation, scale, color);
 }
 
 void YellowBall::OnUpdate(float deltaTime)
 {
-	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
+	D3DXVECTOR3 force = ai->onUpdate(deltaTime);
 	speed += force / weight * deltaTime;
 	position += speed * deltaTime;
 }
@@ -57,7 +57,7 @@ std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
     if (D3DXVec3Length(&speed) == 0.0f) { return ret; }
     float shortestDistance = visibilityDistance;
 
-    for (auto leader : Game::GetInstance()->blackboard->yellowBallsLeaders) {
+    for (auto leader : Game::getInstance()->blackboard->yellowBallsLeaders) {
         D3DXVECTOR3 diffVec = leader->GetPosition() - GetPosition();
         float distance = D3DXVec3Length(&diffVec);
         if (distance < shortestDistance) {

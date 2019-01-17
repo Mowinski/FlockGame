@@ -1,42 +1,42 @@
 #pragma once
-#include "Renderable.h"
-#include "YellowBall.h"
 #include "Building.h"
-
-#include <vector>
+#include "Renderable.h"
+#include <d3dx9math.h>
 #include <memory>
+#include <vector>
 
 class RedBallAI;
 
 class RedBall : public Renderable {
 public:
-    RedBall(D3DXVECTOR3 _position, D3DXVECTOR3 lookDir);
-    ~RedBall();
+    RedBall(const D3DXVECTOR3& _position, const D3DXVECTOR3& _lookDir);
+    ~RedBall() = default;
 
     void OnRender() override;
     void OnUpdate(float deltaTime) override;
-    void checkHitWithYellowBall();
     bool OnInit() override;
-    D3DXVECTOR3 GetPosition() const override;
-    std::shared_ptr<YellowBall> getCurrentTarget() const;
-    void unsetTarget();
-    bool isDead() const;
+
+	D3DXVECTOR3 GetPosition() const override { return position; };
+	bool isDead() const { return position.y <= groundLevel; };
 
 protected:
     D3DXVECTOR3 position;
-    D3DXVECTOR3 lookDir;
     D3DXVECTOR3 speed{ 0.0f, 0.0f, 0.0f };
+	std::shared_ptr<RedBallAI> ai{ nullptr };
 
     const float weight = 0.1f;
-    const float ballSize = 0.2f;
+    const float ballDiameter = 0.2f;
     const float groundLevel = 0.05f;
 
     const D3DXVECTOR3 gravity{ 0.0f, -0.9f, 0.0f };
     const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };
-    const D3DXVECTOR3 scale{ ballSize, ballSize, ballSize };
+    const D3DXVECTOR3 scale{ ballDiameter, ballDiameter, ballDiameter };
     const D3DXVECTOR4 color{ 1.0f, 0.0f, 0.0f, 1.0f };
 
-    std::shared_ptr<RedBallAI> ai;
+	void checkHitWithYellowBall() const;
+	D3DXVECTOR3 calculateNewSpeed(float deltaTime) const;
+	D3DXVECTOR3 calculateReflectionSpeed(const std::shared_ptr<Building>& building) const;
+
 
     friend class RedBallAI;
 };

@@ -3,25 +3,23 @@
 #include "YellowBall.h"
 #include "Game.h"
 
-#include <d3dx9.h>
-#include <limits>
+#include <d3dx9math.h>
 
 class RedBallAI {
 public:
     RedBallAI(RedBall* _actor);
-    ~RedBallAI();
+    ~RedBallAI() = default;
 
-    D3DXVECTOR3 OnUpdate(float deltaTime);
-    void AddEnergy(float inc);
-    void FindNewTargetBall();
+    D3DXVECTOR3 onUpdate(float deltaTime);
+    void findNewTargetBall();
+	void addEnergy(float inc) { energy += inc; };
+	void unsetTarget() { target = nullptr; };
 
 protected:
-    float energy{ Game::GetInstance()->blackboard->startRedBallEnergy };
-    float distanceToTarget{ (std::numeric_limits<float>::max)() };
-    std::shared_ptr<YellowBall> target;
+	RedBall* actor;
 
-    RedBall* actor;
+    float energy{ Game::getInstance()->blackboard->startRedBallEnergy };
+	std::shared_ptr<YellowBall> target{ nullptr };
 
-    friend class RedBall;
 };
 

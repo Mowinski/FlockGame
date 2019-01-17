@@ -1,10 +1,9 @@
 #pragma once
-#include <vector>
-#include <memory>
-
-#include "Renderable.h"
 #include "Building.h"
 #include "NavMeshItem.h"
+#include "Renderable.h"
+#include <memory>
+#include <vector>
 
 using CityMatrix = std::vector<std::vector<int>>;
 using BuildingVector = std::vector<std::shared_ptr<Building>>;
@@ -12,21 +11,20 @@ using BuildingVector = std::vector<std::shared_ptr<Building>>;
 class City : public Renderable {
 public:
     City(std::string _filename);
-    ~City();
-
+    ~City() = default;
 
     bool OnInit();
     void OnUpdate(float deltaTime) override;
     void OnRender() override;
     D3DXVECTOR3 GetPosition() const override;
 
-    BuildingVector getBuildingListNear(D3DXVECTOR3 point, float range) const;
-    bool isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const;
+    BuildingVector getBuildingListNear(const D3DXVECTOR3& point, float range) const;
+    bool isCollideWithAnyBuilding(const std::shared_ptr<NavMeshItem>& item, float range) const;
     bool isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const;
 	std::shared_ptr<Building> getBuildingActorIsColidingWith(const D3DXVECTOR3& point, float range) const;
 
-    float getMapWidth() const;
-    float getMapHeight() const;
+	float getMapWidth() const { return buildingsInRow * 4.0f + (buildingsInRow - 1) * 3.0f + 2.0f * cityBorderX; };
+	float getMapHeight() const { return buildingsInCol * 4.0f + (buildingsInCol - 1) * 3.0f + 2.0f * cityBorderZ; };
 
 protected:
     CityMatrix matrixOfCity;
@@ -43,4 +41,3 @@ protected:
     int buildingsInRow;
     int buildingsInCol;
 };
-

@@ -4,12 +4,13 @@ public:
     Timer() = default;
     ~Timer() = default;
 
-	float getDeltaTime() const;
+	float getDeltaTime() const { return timeSinceLastRender; };
+	bool canStartNextFrame() const { return timeSinceLastRender >= minTimeToNextFrame; };
+	void clearTimeSinceLastRender() { timeSinceLastRender = 0.0f; };
+	void updateTime(float deltaTime);
 	float getRoundTime() const;
 	void freezeRoundTime();
-    void updateTime(float deltaTime);
-    bool canStartNextFrame() const;
-    void clearTimeSinceLastRender();
+
 
 protected:
     float totalGameTime{ 0.0f };

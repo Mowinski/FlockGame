@@ -1,22 +1,18 @@
 #include "City.h"
 
-#include <fstream>
-#include <sstream>
 #include <algorithm>
 #include <cctype>
+#include <fstream>
+#include <sstream>
 
 City::City(std::string _filename) : filename(_filename)
-{
-}
-
-
-City::~City()
 {
 }
 
 bool City::OnInit()
 {
     if (!LoadCityFile()) { return false; }
+
     buildingsInRow = matrixOfCity[0].size();
     buildingsInCol = matrixOfCity.size();
     const float mapWidthX = buildingsInRow * 7.0f + 3.0f;
@@ -54,7 +50,7 @@ D3DXVECTOR3 City::GetPosition() const
     return D3DXVECTOR3();
 }
 
-BuildingVector City::getBuildingListNear(D3DXVECTOR3 point, float range) const
+BuildingVector City::getBuildingListNear(const D3DXVECTOR3& point, float range) const
 {
     BuildingVector vector{};
 
@@ -66,18 +62,18 @@ BuildingVector City::getBuildingListNear(D3DXVECTOR3 point, float range) const
     return vector;
 }
 
+bool City::isCollideWithAnyBuilding(const std::shared_ptr<NavMeshItem>& item, float range) const
+{
+	BuildingVector buildings = getBuildingListNear(item->GetPosition(), range);
+	auto collideCmp = [item](std::shared_ptr<Building> b) {return b->isCollide(item->collisionBox); };
+	return std::any_of(buildings.begin(), buildings.end(), collideCmp);
+}
+
 bool City::isCollideWithAnyBuilding(const D3DXVECTOR3& point, float range) const
 {
     BuildingVector buildings = getBuildingListNear(point, range);
     auto collideCmp = [point](std::shared_ptr<Building> b) {return b->isCollide(point); };
     return std::any_of(buildings.begin(), buildings.end(), collideCmp);
-}
-
-bool City::isCollideWithAnyBuilding(std::shared_ptr<NavMeshItem> item, float range) const
-{
-	BuildingVector buildings = getBuildingListNear(item->GetPosition(), range);
-	auto collideCmp = [item](std::shared_ptr<Building> b) {return b->isCollide(item->collisionBox); };
-	return std::any_of(buildings.begin(), buildings.end(), collideCmp);
 }
 
 std::shared_ptr<Building> City::getBuildingActorIsColidingWith(const D3DXVECTOR3 & point, float range) const
@@ -88,17 +84,6 @@ std::shared_ptr<Building> City::getBuildingActorIsColidingWith(const D3DXVECTOR3
 	if (it == buildings.end()) return nullptr;
 	return *it;
 }
-
-float City::getMapWidth() const
-{
-    return buildingsInRow * 4.0f + (buildingsInRow - 1) * 3.0f + 2.0f * cityBorderX;
-}
-
-float City::getMapHeight() const
-{
-    return buildingsInCol * 4.0f + (buildingsInCol - 1) * 3.0f + 2.0f * cityBorderZ;
-}
-
 
 bool City::LoadCityFile()
 {

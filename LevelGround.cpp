@@ -20,11 +20,11 @@ void LevelGround::OnUpdate(float deltaTime)
 
 void LevelGround::OnRender()
 {
-    Render(Game::GetInstance()->loader->GetMesh("unitbox"), levelGroundPosition, rotation, levelGroundScale, greenColor);
+    Render(Game::getInstance()->loader->GetMesh("unitbox"), levelGroundPosition, rotation, levelGroundScale, greenColor);
 
 	// Fence Render
 	for (unsigned int i = 0; i < fencePosition.size(); ++i) {
-		Render(Game::GetInstance()->loader->GetMesh("unitbox"), fencePosition[i], rotation, fenceScale[i], blueColor);
+		Render(Game::getInstance()->loader->GetMesh("unitbox"), fencePosition[i], rotation, fenceScale[i], blueColor);
 	}
 }
 

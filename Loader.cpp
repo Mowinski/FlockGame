@@ -1,7 +1,6 @@
 #include "Loader.h"
 
 
-
 Loader::Loader()
 {
     Mesh* teapot = LoadFromFile("resources/meshes/teapot.x");
@@ -22,7 +21,7 @@ Loader::~Loader()
     }
 }
 
-Mesh * Loader::GetMesh(std::string key)
+Mesh* Loader::GetMesh(std::string key)
 {
     return meshes[key];
 }

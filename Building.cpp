@@ -1,18 +1,23 @@
 #include "Building.h"
+
+#include "CPR_Framework.h"
 #include "Game.h"
 
 
-Building::Building(D3DXVECTOR3 _position, int _height) :
+enum BuildingWall {
+	NORTH = 0,
+	SOUTH = 1,
+	EAST = 2,
+	WEST = 3,
+};
+
+
+Building::Building(const D3DXVECTOR3& _position, int _height) :
     position{ _position.x, _height / 2.0f, _position.z },
     height { _height },
-    minPoint{ _position.x - 0.5f * buildingSize - 0.15f, -1.0f, _position.z - 0.5f * buildingSize - 0.15f },
-    maxPoint{ _position.x + 0.5f * buildingSize + 0.15f, static_cast<float>(_height), _position.z + 0.5f * buildingSize + 0.15f },
-    scale{ buildingSize, static_cast<float>(height), buildingSize }
-{
-}
-
-
-Building::~Building()
+    scale{ buildingSize, static_cast<float>(height), buildingSize },
+	collisionBox{ D3DXVECTOR3{ _position.x - 0.5f * buildingSize - 0.15f, 0.0f, _position.z - 0.5f * buildingSize - 0.15f },
+	              D3DXVECTOR3{ _position.x + 0.5f * buildingSize + 0.15f, static_cast<float>(_height), _position.z + 0.5f * buildingSize + 0.15f } }
 {
 }
 
@@ -22,7 +27,7 @@ void Building::OnUpdate(float deltaTime)
 
 void Building::OnRender()
 {
-    Render(Game::GetInstance()->loader->GetMesh("unitbox"), position, rotation, scale, color);
+    Render(Game::getInstance()->loader->GetMesh("unitbox"), position, rotation, scale, color);
 }
 
 bool Building::OnInit()
@@ -42,20 +47,20 @@ bool Building::OnInit()
     return true;
 }
 
-float Building::getDistanceBetweenCenterAndPoint(D3DXVECTOR3 point)
+float Building::getDistanceBetweenCenterAndPoint(const D3DXVECTOR3& point)
 {
-    return D3DXVec3Length(&(position - point));
+	const float diffX = position.x - point.x;
+	const float diffZ = position.z - point.z;
+	return std::sqrt(diffX * diffX + diffZ * diffZ);
 }
 
-bool Building::isCollide(D3DXVECTOR3 point) const
+bool Building::isCollide(const D3DXVECTOR3& point) const
 {
-    AABBCollisionBox collisionBox{ minPoint, maxPoint };
     return collisionBox.isCollide(point);
 }
 
 bool Building::isCollide(const AABBCollisionBox& box) const
 {
-    AABBCollisionBox collisionBox{ minPoint, maxPoint };
     return collisionBox.isCollide(box);
 }
 
@@ -64,7 +69,7 @@ D3DXVECTOR3 Building::GetPosition() const
     return position;
 }
 
-D3DXVECTOR3 Building::GetNormalAtPoint(const D3DXVECTOR3 & point) const
+D3DXVECTOR3 Building::getNormalAtPoint(const D3DXVECTOR3 & point) const
 {
 	float distance = (std::numeric_limits<float>::max)();
 	short int index = -1;

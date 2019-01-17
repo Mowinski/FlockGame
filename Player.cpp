@@ -28,10 +28,10 @@ void Player::OnUpdate(float deltaTime)
     D3DXVECTOR3 target{ eyePosition + lookDir };
     LookAt(eyePosition, target);
 
-    if (Game::GetInstance()->blackboard->isPlayerReloading && lastShootTime < reloadTime) {
+    if (Game::getInstance()->blackboard->isPlayerReloading && lastShootTime < reloadTime) {
         lastShootTime += deltaTime;
     } else {
-        Game::GetInstance()->blackboard->isPlayerReloading = false;
+        Game::getInstance()->blackboard->isPlayerReloading = false;
         lastShootTime = 0.0f;
     }
 }
@@ -54,8 +54,8 @@ D3DXVECTOR3 Player::GetPosition() const
 void Player::Rotate(float deltaTime)
 {
     D3DXVECTOR2 mouseDelta = CalculateMouseDelta();
-    xRotation += -mouseDelta.x * Game::GetInstance()->blackboard->mouseSensitivity * deltaTime;
-    yRotation += mouseDelta.y * Game::GetInstance()->blackboard->mouseSensitivity * deltaTime;
+    xRotation += -mouseDelta.x * Game::getInstance()->blackboard->mouseSensitivity * deltaTime;
+    yRotation += mouseDelta.y * Game::getInstance()->blackboard->mouseSensitivity * deltaTime;
 
     if (yRotation > maxYAngle) { yRotation = maxYAngle; }
     if (yRotation < -maxYAngle) { yRotation = -maxYAngle; }
@@ -106,25 +106,25 @@ inline D3DXVECTOR2 Player::CalculateMoveSpeed()
 {
     float speedAhead = 0.0f, speedSide = 0.0f;
     if (IsKeyPressed(Key::KEY_W) || IsKeyPressed(KEY_UP)) {
-        speedSide = Game::GetInstance()->blackboard->maxMovePlayerSpeed;
+        speedSide = Game::getInstance()->blackboard->maxMovePlayerSpeed;
     }
     if (IsKeyPressed(Key::KEY_S) || IsKeyPressed(KEY_DOWN)) {
-        speedSide = -Game::GetInstance()->blackboard->maxMovePlayerSpeed;
+        speedSide = -Game::getInstance()->blackboard->maxMovePlayerSpeed;
     }
     if (IsKeyPressed(Key::KEY_A) || IsKeyPressed(KEY_LEFT)) {
-        speedAhead = Game::GetInstance()->blackboard->maxMovePlayerSpeed;
+        speedAhead = Game::getInstance()->blackboard->maxMovePlayerSpeed;
     }
     if (IsKeyPressed(Key::KEY_D) || IsKeyPressed(KEY_RIGHT)) {
-        speedAhead = -Game::GetInstance()->blackboard->maxMovePlayerSpeed;
+        speedAhead = -Game::getInstance()->blackboard->maxMovePlayerSpeed;
     }
 	if (IsKeyPressed(Key::KEY_RETURN)) {
 		DEBUG_PrintEyePosition();
 	}
-    if (LeftMouseButton() && !Game::GetInstance()->blackboard->isPlayerReloading) {
+    if (LeftMouseButton() && !Game::getInstance()->blackboard->isPlayerReloading) {
         std::shared_ptr<RedBall> ball = std::make_shared<RedBall>(eyePosition, lookDir);
         ball->OnInit();
-        Game::GetInstance()->blackboard->redBalls.push_back(ball);
-        Game::GetInstance()->blackboard->isPlayerReloading = true;
+        Game::getInstance()->blackboard->redBalls.push_back(ball);
+        Game::getInstance()->blackboard->isPlayerReloading = true;
     }
     return D3DXVECTOR2(speedAhead, speedSide);
 }
@@ -149,11 +149,11 @@ D3DXVECTOR3 Player::CalculateYRotateForVector(float angle) const
 
 bool Player::isOutOfMap(const D3DXVECTOR3 &position) const
 {
-	if (std::fabs(position.x) > 0.49f * Game::GetInstance()->city->getMapWidth()) {
+	if (std::fabs(position.x) > 0.49f * Game::getInstance()->city->getMapWidth()) {
 		return true;
 	}
 
-	if (std::fabs(position.z) > 0.49f * Game::GetInstance()->city->getMapHeight()) {
+	if (std::fabs(position.z) > 0.49f * Game::getInstance()->city->getMapHeight()) {
 		return true;
 	}
 
@@ -163,7 +163,7 @@ bool Player::isOutOfMap(const D3DXVECTOR3 &position) const
 bool Player::isMoveAllowed(const D3DXVECTOR3 &position) const
 {
 	if (isOutOfMap(position)) return false;
-	if (Game::GetInstance()->city->isCollideWithAnyBuilding(position, 5.0f)) return false;
+	if (Game::getInstance()->city->isCollideWithAnyBuilding(position, 5.0f)) return false;
 	return true;
 }
 

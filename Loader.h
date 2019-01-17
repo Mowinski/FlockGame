@@ -1,6 +1,7 @@
 #pragma once
-#include <map>
 #include "CPR_Framework.h"
+#include <map>
+
 class Loader {
 public:
     Loader();
@@ -10,4 +11,3 @@ public:
 protected:
     std::map<std::string, Mesh*> meshes;
 };
-

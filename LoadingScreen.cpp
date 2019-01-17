@@ -22,7 +22,7 @@ void LoadingScreen::OnRender()
 
     SetRect(&font_rect, 0, 0, width, height);
 
-    Game::GetInstance()->graphicDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 0, 0);
+    Game::getInstance()->graphicDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 0, 0);
     font->DrawText(NULL, str.c_str(), -1, &font_rect, DT_CENTER | DT_VCENTER | DT_NOCLIP, D3DCOLOR_RGBA(255, 255, 255, 255));
 }
 
@@ -64,11 +64,11 @@ void LoadingScreen::OnUpdate(float deltaTime)
 bool LoadingScreen::OnInit()
 {
     D3DVIEWPORT9 viewport;
-    Game::GetInstance()->graphicDevice->GetViewport(&viewport);
+    Game::getInstance()->graphicDevice->GetViewport(&viewport);
     width = viewport.Width;
     height = viewport.Height;
 
-    HRESULT hr = D3DXCreateFont(Game::GetInstance()->graphicDevice,
+    HRESULT hr = D3DXCreateFont(Game::getInstance()->graphicDevice,
                                 46,
                                 0,
                                 FW_BOLD,

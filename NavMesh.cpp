@@ -54,7 +54,7 @@ void NavMesh::generateNavMeshItems()
 	for (float x = -halfOfLevelSizeX; x < halfOfLevelSizeX; ++x) {
 		for (float z = -halfOfLevelSizeZ; z < halfOfLevelSizeZ; ++z) {
 			D3DXVECTOR3 navMeshPosition{ x, 0.5f, z };
-			if (Game::GetInstance()->city->isCollideWithAnyBuilding(navMeshPosition, 8.0f)) { continue; }
+			if (Game::getInstance()->city->isCollideWithAnyBuilding(navMeshPosition, 8.0f)) { continue; }
 			generateNavMeshItem(id++, navMeshPosition);
 		}
 	}

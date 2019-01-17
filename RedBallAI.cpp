@@ -1,44 +1,31 @@
 #include "RedBallAI.h"
-#include "Game.h"
-#include <sstream>
 
-RedBallAI::RedBallAI(RedBall* _actor) : actor(_actor), target{ nullptr }
+RedBallAI::RedBallAI(RedBall* _actor) : actor(_actor)
 {
 }
 
-
-RedBallAI::~RedBallAI()
-{
-}
-
-
-D3DXVECTOR3 RedBallAI::OnUpdate(float deltaTime)
+D3DXVECTOR3 RedBallAI::onUpdate(float deltaTime)
 {
 	float speedValue = D3DXVec3Length(&(actor->speed));
 	if (speedValue > 15.0f) { return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
 	if (energy < 0.0f) { return  D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
 	if (target == nullptr) { 
-		FindNewTargetBall();
+		findNewTargetBall();
 		if (target == nullptr) {
 			return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };;
 		}
 	}
 
-	D3DXVECTOR3 dir = target->GetPosition() - actor->position;
-	D3DXVec3Normalize(&dir, &dir);
-	D3DXVECTOR3 desired_velocity =  dir * Game::GetInstance()->blackboard->maxRedBallSpeed;
-	D3DXVECTOR3 steering = desired_velocity - actor->speed;
+	D3DXVECTOR3 desiredDirection = target->GetPosition() - actor->position;
+	D3DXVec3Normalize(&desiredDirection, &desiredDirection);
+	D3DXVECTOR3 desiredVelocity =  desiredDirection * Game::getInstance()->blackboard->maxRedBallSpeed;
+	D3DXVECTOR3 steering = desiredVelocity - actor->speed;
 
 	energy -= D3DXVec3Length(&steering) * deltaTime;
     return steering;
 }
 
-void RedBallAI::AddEnergy(float inc)
+void RedBallAI::findNewTargetBall()
 {
-    energy += inc;
-}
-
-void RedBallAI::FindNewTargetBall()
-{
-    target = Game::GetInstance()->blackboard->getNearestBall(actor->position);
+    target = Game::getInstance()->blackboard->getNearestBall(actor->position);
 }
