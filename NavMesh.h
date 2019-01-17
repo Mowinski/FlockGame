@@ -6,23 +6,23 @@
 #include <memory>
 
 
-class NavMesh : public Renderable {
+class NavMesh {
 public:
     NavMesh(float _levelSizeX, float _levelSizeZ);
-    ~NavMesh();
+    ~NavMesh() = default;
 
-    void OnRender() override;
-    void OnUpdate(float deltaTime) override;
-    bool OnInit() override;
-    D3DXVECTOR3 GetPosition() const override;
+    void onInit();
 
     std::shared_ptr<NavMeshItem> getRandom() const;
-
-    NavMeshItemsVectorType FindNeighbors(int id, float x, float z) const;
 
     NavMeshItemsVectorType navMeshItems;
 protected:
     float levelSizeX;
     float levelSizeZ;
+
+	NavMeshItemsVectorType findNeighbors(int id, float x, float z) const;
+	void generateNavMeshItem(int id, const D3DXVECTOR3& position) ;
+	void generateConnectionBetweenNavMeshItem();
+	void generateNavMeshItems();
 };
 

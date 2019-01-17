@@ -70,21 +70,19 @@ std::shared_ptr<YellowBall> YellowBall::seeAnyLeader() const
 
 std::shared_ptr<NavMeshItem> YellowBall::GetCurrentNavMeshItem() const
 {
-    return getNearestNavMeshItem(position);
+    return Utils::getNearestNavMeshItem(position);
 }
 
 void YellowBall::SetLeader()
 {
     isLeader = true;
     ai->nominateToLeader();
-    color = D3DXVECTOR4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void YellowBall::UnsetLeader()
 {
     isLeader = false;
 	slotAquired.fill(nullptr);
-    color = D3DXVECTOR4(1.0f, 1.0f, 0.0f, 1.0f);
 }
 
 bool YellowBall::checkTargetLeader(std::shared_ptr<YellowBall> ball) const

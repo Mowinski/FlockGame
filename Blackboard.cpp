@@ -3,33 +3,23 @@
 #include "Utils.h"
 
 #include <algorithm>
-#include <map>
-#include <d3dx9.h>
-#include <limits>
 #include <cmath>
-
-Blackboard::Blackboard( std::shared_ptr<NavMesh> _navMesh) : navMesh(_navMesh)
-{
-}
+#include <limits>
+#include <map>
 
 
-std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem()
-{
-    return navMesh->getRandom();
-}
-
-std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance, float x, float z)
+std::shared_ptr<NavMeshItem> Blackboard::getRandomNavMeshItem(float minDistance, float x, float z) const
 {
     NavMeshItemsVectorType items{};
     auto cmpFunc = [&minDistance, &x, &z](std::shared_ptr<NavMeshItem> item) { return item->CalculateDist(x, z) > minDistance; };
-    std::copy_if(navMesh->navMeshItems.begin(), navMesh->navMeshItems.end(), std::back_inserter(items), cmpFunc);
+    std::copy_if(Game::GetInstance()->navMesh->navMeshItems.begin(), Game::GetInstance()->navMesh->navMeshItems.end(), std::back_inserter(items), cmpFunc);
 
     auto randIt = items.begin();
     std::advance(randIt, std::rand() % items.size());
     return *randIt;
 }
 
-std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3& position) const
+std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3 &position) const
 {
     std::shared_ptr<YellowBall> ret{ nullptr };
     float minLength = (std::numeric_limits<float>::max)();
@@ -43,13 +33,13 @@ std::shared_ptr<YellowBall> Blackboard::getNearestBall(const D3DXVECTOR3& positi
     return ret;
 }
 
-NavMeshItemsVectorType Blackboard::getPath(std::shared_ptr<NavMeshItem> start, std::shared_ptr<NavMeshItem> end)
+NavMeshItemsVectorType Blackboard::getPath(const std::shared_ptr<NavMeshItem>& start, const std::shared_ptr<NavMeshItem>& end)
 {
     NavMeshItemsVectorType path{};
     const float INF = (std::numeric_limits<float>::max)();
     NavMeshItemsVectorType closedSet{};
     NavMeshItemsVectorType openSet{};
-    std::map< std::shared_ptr<NavMeshItem>, std::shared_ptr<NavMeshItem> > cameFrom;
+    std::map<std::shared_ptr<NavMeshItem>, std::shared_ptr<NavMeshItem>> cameFrom;
     std::map<std::shared_ptr<NavMeshItem>, float> gScore;
     std::map<std::shared_ptr<NavMeshItem>, float> fScore;
 
@@ -105,76 +95,76 @@ NavMeshItemsVectorType Blackboard::getPath(std::shared_ptr<NavMeshItem> start, s
     return path;
 }
 
-std::shared_ptr<NavMeshItem> Blackboard::getNextStep(const D3DXVECTOR3 & start, std::shared_ptr<NavMeshItem> end)
-{
-    std::shared_ptr<NavMeshItem> startNavMesh;
-    float diff = (std::numeric_limits<float>::max)();
-    for (auto item : navMesh->navMeshItems) {
-        float length = D3DXVec3Length(&(item->GetPosition() - start));
-        if (length < diff) {
-            diff = length;
-            startNavMesh = item;
-        }
-    }
-
-    return getPath(startNavMesh, end)[0];
-}
-
 void Blackboard::nominateLeaders()
 {
-    size_t ballsCount = yellowBalls.size();
-    int leadersCount = static_cast<int>(std::ceil(static_cast<float>(ballsCount) / 5.0f));
-    yellowBallsLeaders.clear();
-    for (auto ball : yellowBalls) {
-        ball->UnsetLeader();
-    }
-
+	const size_t ballsCount = yellowBalls.size();
+	const short unsigned int leadersCount = static_cast<short unsigned int>(std::ceil(ballsCount / 5.0f));
     std::random_shuffle(yellowBalls.begin(), yellowBalls.end());
-    for (auto it = yellowBalls.begin(); it != yellowBalls.begin() + leadersCount; ++it) {
-        (*it)->SetLeader();
-        yellowBallsLeaders.push_back(*it);
-    }
+	std::for_each(yellowBalls.begin(), yellowBalls.begin() + leadersCount, [this](auto ball) { ball->SetLeader(); yellowBallsLeaders.push_back(ball); });
 }
 
-void Blackboard::destroyYellowBall(std::shared_ptr<YellowBall> ball)
+void Blackboard::cleanUpAfterHit(const std::shared_ptr<YellowBall> &ball)
 {
-    auto it = std::find(yellowBalls.begin(), yellowBalls.end(), ball);
-    if (it != yellowBalls.end()) {
-        yellowBalls.erase(it);
-    }
+	if (ball->isBallLeader()) {
+		unsetTargetLeader(ball);
+		rearrangeLeaders(ball);
+	}
+	destroyYellowBall(ball);
+	checkWiningCondition();
+}
 
+void Blackboard::clearDeadRedBalls()
+{
+	auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return !item->isDead(); });
+
+	if (redBallIt != redBalls.end()) {
+		createNewYellowBall((*redBallIt)->GetPosition());
+		redBalls.erase(redBallIt);
+	}
+}
+
+void Blackboard::clearLeaders()
+{
+	std::for_each(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), [](auto ball) { ball->UnsetLeader(); });
+	yellowBallsLeaders.clear();
+}
+
+void Blackboard::createNewYellowBall(const D3DXVECTOR3 &position)
+{
+	std::shared_ptr<NavMeshItem> navMeshItem = Utils::getNearestNavMeshItem(position);
+	auto yellowBall = std::make_shared<YellowBall>(navMeshItem, 2.0f);
+	yellowBalls.push_back(yellowBall);
+}
+
+void Blackboard::rearrangeLeaders(const std::shared_ptr<YellowBall> & ball)
+{
+	auto it = std::find(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), ball);
+	if (it != yellowBallsLeaders.end()) {
+		clearLeaders();
+		nominateLeaders();
+	}
+}
+
+void Blackboard::unsetTargetLeader(const std::shared_ptr<YellowBall> &ball)
+{
 	for (auto b : yellowBalls) {
 		if (b->checkTargetLeader(ball)) {
 			b->UnsetTargetLeader();
 		}
 	}
+}
 
-    it = std::find(yellowBallsLeaders.begin(), yellowBallsLeaders.end(), ball);
-    if (it != yellowBallsLeaders.end()) {
-        yellowBallsLeaders.erase(it);
-        nominateLeaders();
-    }
-
-    std::for_each(redBalls.begin(), redBalls.end(), [&ball](std::shared_ptr<RedBall> item) { if (item->getCurrentTarget() == ball) item->unsetTarget(); });
-
-	if (yellowBalls.size() == 0) {
-		Game::GetInstance()->timer->freezeRoundTime();
+void Blackboard::destroyYellowBall(const std::shared_ptr<YellowBall> & ball)
+{
+	auto it = std::find(yellowBalls.begin(), yellowBalls.end(), ball);
+	if (it != yellowBalls.end()) {
+		yellowBalls.erase(it);
 	}
 }
 
-void Blackboard::createNewYellowBall(const D3DXVECTOR3 & position)
+void Blackboard::checkWiningCondition()
 {
-	std::shared_ptr<NavMeshItem> navMeshItem = getNearestNavMeshItem(position);
-    auto yellowBall = std::make_shared<YellowBall>(navMeshItem, 2.0f);
-    yellowBalls.push_back(yellowBall);
-}
-
-void Blackboard::clearRedBalls()
-{
-    auto redBallIt = std::find_if(redBalls.begin(), redBalls.end(), [](auto item) {return !item->isDead(); });
-
-    if (redBallIt != redBalls.end()) {
-        createNewYellowBall((*redBallIt)->GetPosition());
-        redBalls.erase(redBallIt);
-    }
+	if (yellowBalls.size() == 0) {
+		Game::GetInstance()->timer->freezeRoundTime();
+	}
 }

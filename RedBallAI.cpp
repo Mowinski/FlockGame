@@ -18,7 +18,7 @@ D3DXVECTOR3 RedBallAI::OnUpdate(float deltaTime)
 	if (speedValue > 15.0f) { return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
 	if (energy < 0.0f) { return  D3DXVECTOR3{ 0.0f, 0.0f, 0.0f }; }
 	if (target == nullptr) { 
-		target = Game::GetInstance()->blackboard->getNearestBall(actor->position);
+		FindNewTargetBall();
 		if (target == nullptr) {
 			return D3DXVECTOR3{ 0.0f, 0.0f, 0.0f };;
 		}
@@ -38,7 +38,7 @@ void RedBallAI::AddEnergy(float inc)
     energy += inc;
 }
 
-void RedBallAI::FindNewBall()
+void RedBallAI::FindNewTargetBall()
 {
     target = Game::GetInstance()->blackboard->getNearestBall(actor->position);
 }

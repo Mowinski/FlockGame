@@ -23,6 +23,7 @@ public:
     D3DXVECTOR3 GetSpeed() const;
     std::shared_ptr<YellowBall> seeAnyLeader() const;
     std::shared_ptr<NavMeshItem> GetCurrentNavMeshItem() const;
+	bool isBallLeader() const { return isLeader; };
     void SetLeader();
     void UnsetLeader();
 	bool checkTargetLeader(std::shared_ptr<YellowBall> ball) const;
@@ -44,7 +45,7 @@ protected:
 
     const D3DXVECTOR3 scale;
     const D3DXVECTOR3 rotation{ 0.0f, 0.0f, 0.0f };
-    D3DXVECTOR4 color{1.0f, 1.0f, 0.0f, 1.0f};
+    const D3DXVECTOR4 color{1.0f, 1.0f, 0.0f, 1.0f};
 
     std::shared_ptr<YellowBallAI> ai;
     bool isLeader{ false };

@@ -13,10 +13,10 @@ public:
 
     D3DXVECTOR3 OnUpdate(float deltaTime);
     void AddEnergy(float inc);
-    void FindNewBall();
+    void FindNewTargetBall();
 
 protected:
-    float energy{ Game::GetInstance()->blackboard->stargingEnergy };
+    float energy{ Game::GetInstance()->blackboard->startRedBallEnergy };
     float distanceToTarget{ (std::numeric_limits<float>::max)() };
     std::shared_ptr<YellowBall> target;
 

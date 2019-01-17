@@ -49,7 +49,7 @@ void Game::Update(float deltaTime)
     for (auto ball : blackboard->redBalls) {
         ball->OnUpdate(timeSinceLastFrame);
     }
-    blackboard->clearRedBalls();
+    blackboard->clearDeadRedBalls();
     timer->clearTimeSinceLastRender();
 }
 
@@ -92,7 +92,7 @@ bool Game::PrepareLevel(const std::string& filename)
 bool Game::PrepareNavMesh()
 {
     navMesh = std::make_shared<NavMesh>(city->getMapWidth(), city->getMapHeight());
-    if (!navMesh->OnInit()) { return false; }
+	navMesh->onInit();
     return true;
 }
 
@@ -133,7 +133,7 @@ void Game::Loading()
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PREPARE_BLACKBOARD;
-    blackboard = std::make_unique<Blackboard>(navMesh);
+    blackboard = std::make_unique<Blackboard>();
     std::this_thread::sleep_for(std::chrono::milliseconds(delayTime));
 
     loadingScreen->state = LoadingState::PREPARE_YELLOW_BALL;

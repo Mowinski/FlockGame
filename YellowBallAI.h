@@ -51,7 +51,7 @@ protected:
     YellowBallVectorType followers;
 
     std::uniform_real_distribution<float> heightDist{ 1.0f, 10.0f };
-	std::uniform_int_distribution<int> escapeLength{ 3, 8 };
+	std::uniform_int_distribution<unsigned int> escapeLength{ 3, 8 };
 
     D3DXVECTOR3 getFlockSlotPosition();
 

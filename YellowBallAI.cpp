@@ -217,7 +217,7 @@ void YellowBallAI::SelectNewGoal()
 {
     static float minimumDistance = (std::min)(Game::GetInstance()->city->getMapHeight(), Game::GetInstance()->city->getMapWidth()) * 0.35f;
 
-	std::shared_ptr<NavMeshItem> currentNavMesh = getNearestNavMeshItem(actor->position);
+	std::shared_ptr<NavMeshItem> currentNavMesh = Utils::getNearestNavMeshItem(actor->position);
     std::shared_ptr<NavMeshItem> newGoal = Game::GetInstance()->blackboard->getRandomNavMeshItem(minimumDistance, currentNavMesh->position.x, currentNavMesh->position.z);
     path = Game::GetInstance()->blackboard->getPath(currentNavMesh, newGoal);
     goal = newGoal;
@@ -229,10 +229,13 @@ void YellowBallAI::CreateEscapePath()
 	static std::mt19937 gen(rd());
 	path.clear();
 
-	int escapeStepNumber = escapeLength(gen);
-	std::shared_ptr<NavMeshItem> currentNavMesh = getNearestNavMeshItem(actor->position);
-	for (int i = 0; i < escapeStepNumber; ++i) {
+	unsigned int escapeStepNumber = escapeLength(gen);
+	std::shared_ptr<NavMeshItem> currentNavMesh = Utils::getNearestNavMeshItem(actor->position);
+	while(path.size() < escapeStepNumber) {
 		currentNavMesh = currentNavMesh->GetRandomNeighbor();
-		path.push_back(currentNavMesh);
+		auto it = std::find(path.begin(), path.end(), currentNavMesh);
+		if (it == path.end()) {
+			path.push_back(currentNavMesh);
+		}
 	}
 }

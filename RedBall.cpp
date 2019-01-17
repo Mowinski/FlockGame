@@ -29,7 +29,7 @@ void RedBall::OnUpdate(float deltaTime)
     }
 
 	D3DXVECTOR3 force = ai->OnUpdate(deltaTime);
-	truncate(force, Game::GetInstance()->blackboard->maxRedBallForce);
+	Utils::truncate(force, Game::GetInstance()->blackboard->maxRedBallForce);
 	float speedValue = D3DXVec3Length(&speed);
     D3DXVECTOR3 airResistance = - 0.01f * speedValue * speed;
 
@@ -55,9 +55,10 @@ void RedBall::checkHitWithYellowBall()
     if (nearestBall != nullptr) {
         float distance = D3DXVec3Length(&(nearestBall->GetPosition() - position));
         if (distance <= 2 * ballSize) {
-            Game::GetInstance()->blackboard->destroyYellowBall(nearestBall);
+            Game::GetInstance()->blackboard->cleanUpAfterHit(nearestBall);
+			unsetTarget();
             ai->AddEnergy(Game::GetInstance()->blackboard->extraEnergyAfterHiting);
-            ai->FindNewBall();
+            ai->FindNewTargetBall();
         }
     }
 }
